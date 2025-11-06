@@ -1,6 +1,6 @@
 import { asc, between, count, eq, getTableColumns, sql } from 'drizzle-orm'
 import { db } from '../client'
-import { type SelectUser, usersTable } from '../schema/user.schema'
+import { type SelectUser, usersTable } from '../schema/profiles.schema'
 
 export async function getUsers(): Promise<
     Array<{
