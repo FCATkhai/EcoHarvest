@@ -1,5 +1,5 @@
 import { pgTable, text, jsonb, vector, bigserial, uuid } from 'drizzle-orm/pg-core'
-import { products } from './products.schema'
+import { products } from './product'
 
 export const productEmbeddings = pgTable('product_embeddings', {
     id: bigserial('id', { mode: 'number' }).primaryKey(),

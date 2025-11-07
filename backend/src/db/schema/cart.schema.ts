@@ -1,6 +1,6 @@
 import { pgTable, integer, serial, uuid } from 'drizzle-orm/pg-core'
 import { profiles } from './profiles.schema'
-import { products } from './products.schema'
+import { products } from './product'
 import { timestamps } from '../helpers'
 
 export const cart = pgTable('cart', {

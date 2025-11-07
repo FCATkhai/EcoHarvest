@@ -1,6 +1,6 @@
 import { pgTable, serial, integer, varchar, smallint, timestamp, uuid } from 'drizzle-orm/pg-core'
-import { subCategories } from './sub_categories.schema'
-import { timestamps } from '../helpers'
+import { subCategories } from '../sub_categories.schema'
+import { timestamps } from '../../helpers'
 
 export const products = pgTable('products', {
     id: uuid('id').primaryKey(),
@@ -13,6 +13,7 @@ export const products = pgTable('products', {
     sold: integer('sold').default(0),
     origin: varchar('origin'), // noi san xuat
     status: smallint('status'), // 0 - ngung kinh doanh, 1 - kich hoat
+    isDeleted: smallint('is_deleted').default(0), // 0 - khong xoa, 1 - da xoa
     ...timestamps,
-    deletedAt: timestamp('deleted_at')
+    deletedAt: timestamp('deleted_at', { withTimezone: true })
 })

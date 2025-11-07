@@ -1,11 +1,12 @@
 import { pgTable, serial, varchar, timestamp } from 'drizzle-orm/pg-core'
 import { categories } from './categories.schema'
+import { timestamps } from '../helpers'
 
 export const subCategories = pgTable('sub_categories', {
     id: serial('id').primaryKey(),
     parentId: serial('parent_id').references(() => categories.id),
     name: varchar('name'),
     description: varchar('description'),
-    createdAt: timestamp('created_at'),
-    deletedAt: timestamp('deleted_at')
+    ...timestamps,
+    deletedAt: timestamp('deleted_at', { withTimezone: true })
 })
