@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1762487829483,
-      "tag": "0000_puzzling_firedrake",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1762534360761,
-      "tag": "0001_serious_surge",
+      "when": 1762705046006,
+      "tag": "0000_public_firestar",
       "breakpoints": true
     }
   ]

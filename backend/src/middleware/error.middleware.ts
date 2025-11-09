@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express'
-import type AppError from '~/utils/appError'
+import type AppError from '@backend/utils/AppError'
 
 // Middleware xử lý lỗi tập trung
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

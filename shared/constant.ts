@@ -1,3 +1,29 @@
+export const ROLE_NAME = {
+  Admin: "admin",
+  Customer: "customer",
+} as const;
+
+export const ORDER_STATUS = {
+  Pending: "pending",
+  Confirmed: "confirmed",
+  Shipped: "shipped",
+  Delivered: "delivered",
+  Cancelled: "cancelled",
+} as const;
+
+export type OrderStatus = (typeof ORDER_STATUS)[keyof typeof ORDER_STATUS];
+
+export const PAYMENT_STATUS = {
+  Unpaid: "unpaid",
+  Paid: "paid",
+  Failed: "failed",
+} as const;
+
+export const PAYMENT_METHOD = {
+  BankTransfer: "bank_transfer",
+  COD: "COD",
+} as const;
+
 // export const RESTAURANT_STATUSES = {
 //     CLOSING: 'closing',
 //     OPENING: 'opening',

@@ -1,9 +1,9 @@
 import { pgTable, varchar, jsonb, text, timestamp, uuid } from 'drizzle-orm/pg-core'
-import { profiles } from './profiles.schema'
+import { users } from './users.schema'
 
 export const chatSessions = pgTable('chat_sessions', {
     id: uuid('id').primaryKey(),
-    userId: uuid('user_id').references(() => profiles.id),
+    userId: text('user_id').references(() => users.id),
     sessionId: uuid('session_id').unique(),
     createdAt: timestamp('created_at').defaultNow()
 })

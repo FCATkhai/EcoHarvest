@@ -43,10 +43,11 @@
         "skipLibCheck": true,
 
         "moduleResolution": "node",
-        "baseUrl": "../",
+        "baseUrl": ".",
         "paths": {
-            "~/*": ["*"],
-            "~/shared/*": ["shared/*"]
+            "~/*": ["../*"],
+            "@backend/*": ["./src/*"],
+            "~/shared/*": ["../shared/*"]
         }
     },
     "include": ["./**/*.ts"],
