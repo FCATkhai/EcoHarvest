@@ -1,109 +1,68 @@
-// import type { Request, Response, NextFunction } from 'express'
-// import User from '../models/user.model'
-// import TokenBlacklist from '../models/tokenBlackList.model'
-// import jwt from 'jsonwebtoken'
-// import { USER_ROLES } from '~/shared/userRoles'
+import type { Request, Response, NextFunction } from 'express'
+import { USER_ROLES } from '~/shared/userRoles'
+import { auth } from '../utils/auth'
 
-// import dotenv from 'dotenv'
-// dotenv.config()
+const toFetchHeaders = (h: Record<string, string | string[] | undefined>) => {
+    const headers = new Headers()
+    for (const [k, v] of Object.entries(h)) {
+        if (v == null) continue
+        headers.set(k, Array.isArray(v) ? v.join(', ') : v)
+    }
+    return headers
+}
 
-// const JWT_SECRET = process.env.JWT_SECRET as string
+// Middleware xác thực + kiểm tra quyền truy cập dựa trên role
+// nếu mảng allowRoles là [] nghĩa là tất cả user đã đăng nhập có quyền truy cập
+export const authorize =
+    (allowedRoles: string[] = []) =>
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            // Lấy session từ Better Auth
+            const session = await auth.api.getSession({ headers: toFetchHeaders(req.headers) })
 
-// // khi nào chỉ cần xác thực thì dùng middleware này
-// // Middleware kiểm tra token và lấy user
-// export const authenticate = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//     try {
-//         const authHeader = req.headers.authorization
-//         if (authHeader && authHeader.startsWith('Bearer ')) {
-//             const token = authHeader.split(' ')[1]
-//             if (!token) {
-//                 res.status(401)
-//                 throw new Error('Unauthorized')
-//             }
-//             // Kiểm tra token có bị thu hồi không
-//             const isBlacklisted = await TokenBlacklist.findOne({ token })
-//             if (isBlacklisted) {
-//                 res.status(401)
-//                 throw new Error('Token has been revoked. Please log in again.')
-//             }
+            if (!session) {
+                return res.status(401).json({ error: 'Unauthorized: invalid or missing session' })
+            }
+            req.user = session.user
+            // req.access_token = session.sessionToken
 
-//             const decoded = jwt.verify(token, JWT_SECRET) as { _id: string; role: string }
-//             const user = await User.findById(decoded._id).select('-password')
+            // Nếu có danh sách role cho phép → kiểm tra
+            if (allowedRoles.length > 0 && !allowedRoles.includes(session.user.role)) {
+                return res.status(403).json({ error: 'Forbidden: insufficient role' })
+            }
 
-//             if (!user) {
-//                 res.status(401)
-//                 throw new Error('User not found')
-//             }
-//             req.user = user
-//             req.access_token = token
-//             next()
-//         } else {
-//             res.status(401)
-//             throw new Error('Missing or invalid Authorization header')
-//         }
-//     } catch (error) {
-//         next(error)
-//     }
-// }
+            next()
+        } catch (error) {
+            console.error('Authorize error:', error)
+            return res.status(401).json({ error: 'Unauthorized: session invalid' })
+        }
+    }
 
-// // Middleware xác thực + kiểm tra quyền truy cập dựa trên role
-// // nếu mảng allowRoles là [] nghĩa là tất cả user đã đăng nhập có quyền truy cập
-// export const authorize =
-//     (allowedRoles: string[] = []) =>
-//     async (req: Request, res: Response, next: NextFunction) => {
-//         try {
-//             const authHeader = req.headers.authorization
-//             if (authHeader && authHeader.startsWith('Bearer ')) {
-//                 const token = authHeader.split(' ')[1]
-//                 if (!token) {
-//                     res.status(401)
-//                     throw new Error('Unauthorized')
-//                 }
-//                 // Kiểm tra token có bị thu hồi không
-//                 const isBlacklisted = await TokenBlacklist.findOne({ token })
-//                 if (isBlacklisted) {
-//                     res.status(401)
-//                     throw new Error('Token has been revoked. Please log in again.')
-//                 }
+// chỉ allow admin hoặc chính chủ (dựa vào id trong query param hoặc params)
 
-//                 const decoded = jwt.verify(token, JWT_SECRET) as { _id: string; role: string }
-//                 const user = await User.findById(decoded._id).select('-password')
+export const ownershipAuthorize = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const requestUserId = req.query.id || req.params.id
 
-//                 if (!user) {
-//                     res.status(401)
-//                     throw new Error('User not found')
-//                 }
-//                 req.user = user
-//                 req.access_token = token
-//                 // Kiểm tra quyền hạn (Authorize)
-//                 if (allowedRoles.length != 0 && !allowedRoles.includes(user.role as string)) {
-//                     res.status(403)
-//                     throw new Error('Forbidden - You do not have permission')
-//                 }
-//                 next()
-//             } else {
-//                 res.status(401)
-//                 throw new Error('UnauthoMissing or invalid Authorization headerrized')
-//             }
-//         } catch (error) {
-//             next(error)
-//         }
-//     }
+        if (!requestUserId) {
+            return res.status(400).json({ error: 'Missing user id in params or query' })
+        }
 
-// // chỉ allow admin hoặc chính chủ (dựa vào id trong query param hoặc params)
-// export const onwershipAuthorize = async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const requestUserId = req.query.id || req.params.id
-//         if (!requestUserId) {
-//             res.status(400)
-//             throw new Error('Bad Request: missing user id in query or params')
-//         }
-//         if (req.user?.role !== USER_ROLES.ADMIN && req.user?._id !== requestUserId) {
-//             res.status(403)
-//             throw new Error('Access denied: insufficient permissions')
-//         }
-//         next()
-//     } catch (error) {
-//         next(error)
-//     }
-// }
+        if (!req.user) {
+            return res.status(401).json({ error: 'Unauthorized: no user in request' })
+        }
+
+        // chỉ admin hoặc chính chủ được phép
+        const isAdmin = req.user.role === USER_ROLES.Admin
+        const isOwner = req.user.id === requestUserId
+
+        if (!isAdmin && !isOwner) {
+            return res.status(403).json({ error: 'Access denied: insufficient permissions' })
+        }
+
+        next()
+    } catch (error) {
+        console.error('Ownership check error:', error)
+        return res.status(500).json({ error: 'Internal Server Error' })
+    }
+}

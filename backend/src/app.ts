@@ -6,7 +6,14 @@ import { toNodeHandler } from 'better-auth/node'
 import { auth } from './utils/auth'
 
 const app = express()
-app.use(cors())
+app.use(
+    cors({
+        origin: 'http://localhost:3000', // Chỉ cho phép frontend origin
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        credentials: true, // Cho phép cookies/sessions cross-origin
+        allowedHeaders: ['Content-Type', 'Authorization']
+    })
+)
 app.all('/api/auth/*splat', toNodeHandler(auth))
 app.use(express.json())
 

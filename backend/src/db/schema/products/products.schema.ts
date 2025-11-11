@@ -1,12 +1,12 @@
 import { pgTable, serial, integer, varchar, smallint, timestamp, uuid } from 'drizzle-orm/pg-core'
-import { subCategories } from '../sub_categories.schema'
+import { subCategories } from '../categories/sub_categories.schema'
 import { timestamps } from '../../helpers'
 
 export const products = pgTable('products', {
-    id: uuid('id').primaryKey(),
+    id: uuid('id').defaultRandom().primaryKey(),
     name: varchar('name').notNull(),
     description: varchar('description'),
-    categoryId: serial('category_id').references(() => subCategories.id),
+    categoryId: serial('category_id').references(() => subCategories.id, { onDelete: 'set null' }),
     price: integer('price').default(0),
     unit: varchar('unit'), // don vi tinh
     quantity: integer('quantity').default(0),

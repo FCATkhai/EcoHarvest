@@ -1,5 +1,5 @@
 import { pgTable, serial, integer, varchar, date, text, uuid } from 'drizzle-orm/pg-core'
-import { products } from '../product'
+import { products } from '../products'
 import { timestamps } from '../../helpers'
 import { importReceipts } from './import_receipts.schema'
 

@@ -1,25 +1,36 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import { Button } from '@/components/ui/button'
 
 import { CardDemo } from './cardemo'
+
+// test auth client
+import { authClient } from './lib/auth-client'
+
+const signUpUser = async (email: string, password: string, name: string) => {
+    const { data, error } = await authClient.signUp.email({
+        email,
+        password,
+        name
+    })
+    console.log('User signed up:', data)
+    if (error) {
+        console.error('Error signing up user:', error)
+    }
+}
+
+const SignUpSubmit = async () => {
+    await signUpUser('nva@gmail.com', '123', 'Test User')
+}
 
 function App() {
     const [count, setCount] = useState(0)
 
     return (
         <>
-            <div>
-                <a href='https://vite.dev' target='_blank'>
-                    <img src={viteLogo} className='logo' alt='Vite logo' />
-                </a>
-                <a href='https://react.dev' target='_blank'>
-                    <img src={reactLogo} className='logo react' alt='React logo' />
-                </a>
-            </div>
-            <Button variant='default'>Test Button</Button>
+            <Button variant='default' onClick={SignUpSubmit}>
+                Test Button
+            </Button>
             <CardDemo />
 
             <h1>Vite + React</h1>
