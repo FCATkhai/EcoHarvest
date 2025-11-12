@@ -16,7 +16,7 @@ export const batchDocuments = pgTable('batch_documents', {
     batchId: serial('batch_id')
         .notNull()
         .references(() => batches.id),
-    documentType: varchar('document_type').notNull(),
+    documentType: varchar('document_type').notNull(), // "Giấy kiểm định", "Hóa đơn", "Chứng nhận VSATTP"
     fileUrl: varchar('file_url').notNull(),
     ...timestamps
 })

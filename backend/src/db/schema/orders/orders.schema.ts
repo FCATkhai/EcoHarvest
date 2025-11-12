@@ -7,6 +7,6 @@ export const orders = pgTable('orders', {
     id: uuid('id').defaultRandom().primaryKey(),
     userId: text('user_id').references(() => users.id),
     total: integer('total'),
-    status: orderStatus('status'),
+    status: orderStatus('status').default('pending').notNull(),
     ...timestamps
 })

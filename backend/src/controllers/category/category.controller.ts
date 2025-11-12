@@ -40,7 +40,7 @@ export async function getAllCategories(req: Request, res: Response, next: NextFu
 }
 
 /**
- * @route PUT api/categories/:id
+ * @route PUT/PATCH api/categories/:id
  * @desc Cập nhật danh mục
  * @access Private (admin)
  */

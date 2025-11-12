@@ -3,15 +3,14 @@ import { users } from './users.schema'
 
 export const chatSessions = pgTable('chat_sessions', {
     id: uuid('id').defaultRandom().primaryKey(),
-    userId: text('user_id').references(() => users.id),
-    sessionId: uuid('session_id').unique(),
+    userId: text('user_id').references(() => users.id, { onDelete: 'set null' }),
     createdAt: timestamp('created_at').defaultNow()
 })
 
 export const chatMessages = pgTable('chat_messages', {
     id: uuid('id').defaultRandom().primaryKey(),
-    sessionId: uuid('session_id').references(() => chatSessions.sessionId),
-    sender: varchar('sender'),
+    sessionId: uuid('session_id').references(() => chatSessions.id, { onDelete: 'cascade' }),
+    sender: varchar('sender', { length: 10 }),
     metadata: jsonb('metadata'),
     content: text('content'),
     createdAt: timestamp('created_at').defaultNow()

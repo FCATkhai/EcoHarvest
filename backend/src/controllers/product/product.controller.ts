@@ -123,12 +123,12 @@ export async function getAllProducts(req: Request, res: Response, next: NextFunc
             .offset(offset)
 
         // Query tổng số lượng
-        const totalRow = await db
+        const totalRows = await db
             .select({ count: sql<number>`count(*)` })
             .from(products)
             .where(and(...whereConditions))
 
-        const total = Number(totalRow[0]?.count || 0)
+        const total = Number(totalRows[0]?.count || 0)
         const totalPages = Math.ceil(total / limitNum)
         const hasMore = pageNum < totalPages
 
@@ -145,30 +145,6 @@ export async function getAllProducts(req: Request, res: Response, next: NextFunc
         next(error)
     }
 }
-
-// /**
-//  * @route GET api/products
-//  * @desc Lấy danh sách sản phẩm (có thể lọc theo category)
-//  * @access Public
-//  */
-// export async function getAllProducts(req: Request, res: Response, next: NextFunction) {
-//     try {
-//         const { categoryId } = req.query
-
-//         let query = db.select().from(products).where(eq(products.isDeleted, 0))
-//         if (categoryId) {
-//             query = db
-//                 .select()
-//                 .from(products)
-//                 .where(and(eq(products.categoryId, Number(categoryId)), eq(products.isDeleted, 0)))
-//         }
-
-//         const result = await query
-//         res.status(200).json({ success: true, data: result })
-//     } catch (error: unknown) {
-//         next(error)
-//     }
-// }
 
 /**
  * @route GET api/products/:id
@@ -191,7 +167,7 @@ export async function getProductById(req: Request<{ id: string }>, res: Response
 }
 
 /**
- * @route PUT api/products/:id
+ * @route PUT/PATCH api/products/:id
  * @desc Cập nhật thông tin sản phẩm
  * @access Private (admin, owner)
  */

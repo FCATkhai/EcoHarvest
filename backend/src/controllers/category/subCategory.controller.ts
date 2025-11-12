@@ -48,7 +48,7 @@ export async function getAllSubCategories(req: Request, res: Response, next: Nex
 }
 
 /**
- * @route PUT api/sub-categories/:id
+ * @route PUT/PATCH api/sub-categories/:id
  * @desc Cập nhật danh mục con
  * @access Private (admin)
  */

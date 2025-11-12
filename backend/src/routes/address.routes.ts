@@ -10,6 +10,7 @@ router.post('/', authorize(USER_GROUPS.ALL_USERS), ownershipAuthorize, createAdd
 router.get('/:userId', authorize(USER_GROUPS.ALL_USERS), ownershipAuthorize, getAddressesByUser)
 // Cập nhật địa chỉ
 router.put('/:id', authorize(USER_GROUPS.ALL_USERS), ownershipAuthorize, updateAddress)
+router.patch('/:id', authorize(USER_GROUPS.ALL_USERS), ownershipAuthorize, updateAddress)
 // Xóa địa chỉ
 router.delete('/:id', authorize(USER_GROUPS.ALL_USERS), ownershipAuthorize, deleteAddress)
 

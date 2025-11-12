@@ -48,7 +48,7 @@ export async function getAddressesByUser(req: Request, res: Response, next: Next
 }
 
 /**
- * @route PUT /addresses/:id
+ * @route PUT/PATCH /addresses/:id
  * @desc Cập nhật địa chỉ
  * @access Private
  */

@@ -1,11 +1,12 @@
 import { pgTable, text, timestamp, boolean, varchar } from 'drizzle-orm/pg-core'
+import { roleName } from './enums'
 
 export const users = pgTable('users', {
     id: text('id').primaryKey(),
     name: text('name').notNull(),
     email: text('email').notNull().unique(),
     emailVerified: boolean('email_verified').default(false).notNull(),
-    role: varchar('role', { length: 50 }).notNull().default('customer'),
+    role: roleName('role').notNull().default('customer'),
     image: text('image'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at')
