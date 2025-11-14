@@ -45,7 +45,6 @@
         "moduleResolution": "node",
         "baseUrl": ".",
         "paths": {
-            "~/*": ["../*"],
             "@backend/*": ["./src/*"]
         }
     },

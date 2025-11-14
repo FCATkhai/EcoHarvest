@@ -6,7 +6,7 @@ import {
     deleteSubCategory
 } from '@backend/controllers/category'
 import { authorize } from '../middleware/auth.middleware'
-import { USER_GROUPS } from '~/shared/userRoles'
+import { USER_GROUPS } from '@backend/constants/userRoles'
 
 const router = Router()
 

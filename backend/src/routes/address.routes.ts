@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { createAddress, getAddressesByUser, updateAddress, deleteAddress } from '../controllers/address.controller'
 import { authorize, ownershipAuthorize } from '../middleware/auth.middleware'
-import { USER_GROUPS } from '~/shared/userRoles'
+import { USER_GROUPS } from '@backend/constants/userRoles'
 const router = Router()
 
 // Tạo địa chỉ mới

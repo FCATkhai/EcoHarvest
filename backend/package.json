@@ -8,7 +8,7 @@
         "prettier": "prettier --check .",
         "prettier:fix": "prettier --write .",
         "start": "node --require dotenv/config dist/index.js",
-        "dev": "npx tsx --require dotenv/config --watch src/index.ts",
+        "dev": "npx tsx --require tsconfig-paths/register --require dotenv/config --watch src/index.ts",
         "build": "node esbuild.js"
     },
     "author": "Khai",

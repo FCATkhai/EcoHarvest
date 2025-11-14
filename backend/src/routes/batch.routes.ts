@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { createBatch, getAllBatches, getBatchById, updateBatch, deleteBatch } from '@backend/controllers/batch'
 import { authorize } from '../middleware/auth.middleware'
-import { USER_GROUPS } from '~/shared/userRoles'
+import { USER_GROUPS } from '@backend/constants/userRoles'
 
 const router = Router()
 

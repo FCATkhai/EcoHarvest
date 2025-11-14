@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express'
-import { USER_ROLES } from '~/shared/userRoles'
+import { USER_ROLES } from '@backend/constants/userRoles'
 import { auth } from '../utils/auth'
 
 const toFetchHeaders = (h: Record<string, string | string[] | undefined>) => {
