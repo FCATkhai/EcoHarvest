@@ -9,7 +9,7 @@ export const productImages = pgTable('product_images', {
     imageUrl: varchar('image_url').notNull(),
     isPrimary: boolean('is_primary').default(false).notNull(),
     altText: varchar('alt_text'),
-    createdAt: timestamp('created_at').defaultNow().notNull()
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
 })
 
 export type ProductImage = typeof productImages.$inferSelect

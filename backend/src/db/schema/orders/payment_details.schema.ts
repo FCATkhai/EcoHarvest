@@ -5,9 +5,13 @@ import { timestamps } from '../../helpers'
 
 export const paymentDetails = pgTable('payment_details', {
     id: serial('id').primaryKey(),
-    orderId: uuid('order_id').references(() => orders.id, { onDelete: 'cascade' }),
-    amount: integer('amount'),
-    status: paymentStatus('status'),
-    method: paymentMethod('method'),
+    orderId: uuid('order_id')
+        .references(() => orders.id, { onDelete: 'cascade' })
+        .notNull(),
+    amount: integer('amount').notNull(),
+    status: paymentStatus('status').notNull(),
+    method: paymentMethod('method').notNull(),
     ...timestamps
 })
+
+export type PaymentDetail = typeof paymentDetails.$inferSelect

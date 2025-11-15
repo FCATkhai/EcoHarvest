@@ -3,6 +3,7 @@ import { products } from '../products'
 import { timestamps } from '../../helpers'
 import { importReceipts } from './import_receipts.schema'
 
+//TODO: thêm xử lý status lô hàng: active, consumed, expired
 export const batches = pgTable('batches', {
     id: serial('id').primaryKey(),
     productId: uuid('product_id')
@@ -12,11 +13,14 @@ export const batches = pgTable('batches', {
         .notNull()
         .references(() => importReceipts.id),
     batchCode: varchar('batch_code').unique(),
-    importDate: date('import_date').notNull(),
+    // importDate: date('import_date').notNull(),
     expiryDate: date('expiry_date'),
     quantityImported: integer('quantity_imported').notNull(),
     quantityRemaining: integer('quantity_remaining').notNull(),
     unitCost: integer('unit_cost').notNull().default(0), // giá nhập theo đơn vị
     notes: text('notes'),
+    // status: varchar('status').notNull().default('active'), // active, consumed, expired
     ...timestamps
 })
+
+export type Batch = typeof batches.$inferSelect

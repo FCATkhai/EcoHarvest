@@ -13,3 +13,5 @@ export const importReceipts = pgTable('import_receipts', {
     notes: text('notes'),
     ...timestamps
 })
+
+export type ImportReceipt = typeof importReceipts.$inferSelect

@@ -1,4 +1,4 @@
-import { pgTable, varchar, timestamp, serial, text } from 'drizzle-orm/pg-core'
+import { pgTable, varchar, serial, text } from 'drizzle-orm/pg-core'
 import { users } from './users.schema'
 import { timestamps } from '../helpers'
 
@@ -15,4 +15,4 @@ export const addresses = pgTable('addresses', {
 })
 
 export type InsertAddress = typeof addresses.$inferInsert
-export type TAddress = typeof addresses.$inferSelect
+export type Address = typeof addresses.$inferSelect

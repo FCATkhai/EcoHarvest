@@ -1,8 +1,6 @@
 import { create } from 'zustand'
 import { authClient } from '../lib/auth-client'
 import type { User } from '@/types/user.type'
-import { toast } from 'react-hot-toast'
-import { th } from 'zod/v4/locales'
 
 interface AuthState {
     user: User | null

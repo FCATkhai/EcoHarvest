@@ -3,6 +3,7 @@ import { db } from '@backend/db/client'
 import { orders, orderItems, paymentDetails, products } from '@backend/db/schema/'
 import { eq, and } from 'drizzle-orm'
 import BatchService from '@backend/services/batch.service'
+import UserService from '@backend/services/user.service'
 /**
  * @route POST api/orders
  * @desc Tạo đơn hàng mới (kèm order items và payment)
@@ -12,14 +13,21 @@ export async function createOrder(req: Request, res: Response, next: NextFunctio
     const trx = db.transaction(async (tx) => {
         try {
             const userId = req.user.id
-            const { items, total, paymentMethod } = req.body
+            const { items, total, paymentMethod, deliveryAddress } = req.body
 
             if (!Array.isArray(items) || items.length === 0) {
                 throw new Error('Đơn hàng không có sản phẩm')
             }
 
+            if (!deliveryAddress) {
+                throw new Error('Địa chỉ giao hàng không được để trống')
+            }
+
             // 1) Tạo order
-            const orderRows = await tx.insert(orders).values({ userId, total, status: 'pending' }).returning()
+            const orderRows = await tx
+                .insert(orders)
+                .values({ userId, total, status: 'pending', deliveryAddress })
+                .returning()
 
             const newOrder = orderRows[0]
             if (!newOrder) throw new Error('Không thể tạo đơn hàng')
@@ -110,18 +118,14 @@ export async function getOrderById(req: Request, res: Response, next: NextFuncti
             return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng' })
         }
 
-        // Kiểm tra quyền
-        if (role !== 'admin' && order.userId !== userId) {
-            return res.status(403).json({ success: false, message: 'Không có quyền truy cập đơn hàng này' })
-        }
-
         // Lấy chi tiết items + payment
         const items = await db.select().from(orderItems).where(eq(orderItems.orderId, id))
         const [payment] = await db.select().from(paymentDetails).where(eq(paymentDetails.orderId, id))
+        const orderOwner = await UserService.getUserById(userId)
 
         res.status(200).json({
             success: true,
-            data: { order, items, payment }
+            data: { order, items, payment, orderOwner }
         })
     } catch (error: unknown) {
         next(error)
@@ -187,7 +191,7 @@ export async function updateOrderStatus(req: Request, res: Response, next: NextF
 }
 
 /**
- * @route PUT/PATCH api/payments/:orderId/status
+ * @route PUT/PATCH api/orders/payments/:orderId/status
  * @desc Cập nhật trạng thái thanh toán (unpaid → paid/failed → refunded)
  * @access Private (admin)
  */

@@ -8,3 +8,5 @@ export const orderItems = pgTable('order_items', {
     quantity: integer('quantity'),
     price: integer('price')
 })
+
+export type OrderItem = typeof orderItems.$inferSelect

@@ -9,7 +9,7 @@
 //   "description" text,                  -- mô tả ngắn
 //   "created_at" timestamp DEFAULT NOW()
 // );
-import { pgTable, serial, integer, varchar, date, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { pgTable, serial, integer, varchar, date, text, uuid } from 'drizzle-orm/pg-core'
 import { products } from './products.schema'
 import { timestamps } from '../../helpers'
 

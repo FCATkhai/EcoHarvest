@@ -20,3 +20,5 @@ export const batchDocuments = pgTable('batch_documents', {
     fileUrl: varchar('file_url').notNull(),
     ...timestamps
 })
+
+export type BatchDocument = typeof batchDocuments.$inferSelect

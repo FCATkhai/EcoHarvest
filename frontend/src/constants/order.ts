@@ -15,7 +15,11 @@ export const PAYMENT_STATUS = {
     Refunded: 'refunded'
 } as const
 
+export type PaymentStatus = (typeof PAYMENT_STATUS)[keyof typeof PAYMENT_STATUS]
+
 export const PAYMENT_METHOD = {
     BankTransfer: 'bank_transfer',
     COD: 'COD'
 } as const
+
+export type PaymentMethod = (typeof PAYMENT_METHOD)[keyof typeof PAYMENT_METHOD]

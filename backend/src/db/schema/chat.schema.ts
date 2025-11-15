@@ -4,7 +4,7 @@ import { users } from './users.schema'
 export const chatSessions = pgTable('chat_sessions', {
     id: uuid('id').defaultRandom().primaryKey(),
     userId: text('user_id').references(() => users.id, { onDelete: 'set null' }),
-    createdAt: timestamp('created_at').defaultNow()
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow()
 })
 
 export const chatMessages = pgTable('chat_messages', {
@@ -13,5 +13,5 @@ export const chatMessages = pgTable('chat_messages', {
     sender: varchar('sender', { length: 10 }),
     metadata: jsonb('metadata'),
     content: text('content'),
-    createdAt: timestamp('created_at').defaultNow()
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow()
 })
