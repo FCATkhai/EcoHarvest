@@ -7,7 +7,9 @@ export const productImages = pgTable('product_images', {
         .notNull()
         .references(() => products.id, { onDelete: 'cascade' }),
     imageUrl: varchar('image_url').notNull(),
-    isPrimary: boolean('is_primary').default(false),
+    isPrimary: boolean('is_primary').default(false).notNull(),
     altText: varchar('alt_text'),
-    createdAt: timestamp('created_at').defaultNow()
+    createdAt: timestamp('created_at').defaultNow().notNull()
 })
+
+export type ProductImage = typeof productImages.$inferSelect

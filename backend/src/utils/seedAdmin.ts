@@ -5,7 +5,7 @@ export const seedAdminUser = async () => {
         await auth.api.signUpEmail({
             body: {
                 email: 'admin@gmail.com',
-                password: 'admin@123',
+                password: 'admin',
                 name: 'Admin'
                 // role: 'admin'
             }

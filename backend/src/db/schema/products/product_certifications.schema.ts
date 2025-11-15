@@ -26,3 +26,5 @@ export const productCertifications = pgTable('product_certifications', {
     description: text('description'),
     ...timestamps
 })
+
+export type ProductCertification = typeof productCertifications.$inferSelect

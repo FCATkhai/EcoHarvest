@@ -10,12 +10,13 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { z } from 'zod'
+import { passwordSchema } from '@/validation/password'
 import useAuthStore from '@/store/useAuthStore'
 import AppPath from '@/constants/AppPath'
 
 const signInSchema = z.object({
     email: z.email({ message: 'Xin hãy nhập email hợp lệ' }),
-    password: z.string().min(1, { message: 'Xin hãy nhập mật khẩu' })
+    password: passwordSchema
     // rememberMe: z.boolean().optional()
 })
 

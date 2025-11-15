@@ -8,13 +8,6 @@ const axiosInstance = axios.create({
     withCredentials: true
 })
 
-// Optional: Interceptor để tự động attach token từ Zustand
-axiosInstance.interceptors.request.use((config) => {
-    const token = localStorage.getItem('access_token')
-    if (token) config.headers.Authorization = `Bearer ${token}`
-    return config
-})
-
 axiosInstance.interceptors.response.use(
     (res) => res,
     (err) => {

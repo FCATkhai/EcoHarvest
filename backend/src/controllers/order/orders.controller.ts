@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
 import { db } from '@backend/db/client'
-import { orders, orderItems, paymentDetails } from '@backend/db/schema/'
+import { orders, orderItems, paymentDetails, products } from '@backend/db/schema/'
 import { eq, and } from 'drizzle-orm'
 import BatchService from '@backend/services/batch.service'
-
 /**
  * @route POST api/orders
  * @desc Tạo đơn hàng mới (kèm order items và payment)
@@ -153,6 +152,28 @@ export async function updateOrderStatus(req: Request, res: Response, next: NextF
         // Hoàn kho khi hủy đơn
         if (status === 'cancelled') {
             await BatchService.restoreStockAfterCancel(id)
+        }
+        if (status === 'completed') {
+            // Cập nhật số lượng đã bán cho sản phẩm
+            const items = await db.select().from(orderItems).where(eq(orderItems.orderId, id))
+            await Promise.all(
+                items.map(async (item) => {
+                    //TODO: tạm thời bỏ qua null productId, cần viết lại service riêng để xử lý trường hợp này
+                    if (!item.productId) return
+                    const product = await db.select().from(products).where(eq(products.id, item.productId)).limit(1)
+                    if (product.length) {
+                        const updatedProduct = product[0]
+                        if (!updatedProduct || item.quantity == null || !item.productId) return
+                        await db
+                            .update(products)
+                            .set({
+                                sold: updatedProduct.sold + item.quantity,
+                                updatedAt: new Date()
+                            })
+                            .where(eq(products.id, item.productId))
+                    }
+                })
+            )
         }
 
         res.status(200).json({

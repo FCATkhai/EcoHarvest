@@ -1,6 +1,6 @@
 # Project Todo
 
-- [x] regenerate schema
+- [ ] regenerate schema
 - [ ] cài đặt chức năng embedding
 - [ ] cài đặt chức năng chatbot
 - [ ] cài đặt chức năng thanh toán

@@ -3,7 +3,9 @@ import { timestamps } from '../../helpers'
 
 export const categories = pgTable('categories', {
     id: serial('id').primaryKey(),
-    name: varchar('name'),
+    name: varchar('name').notNull(),
     description: varchar('description'),
     ...timestamps
 })
+
+export type Categories = typeof categories.$inferSelect

@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express'
 import { db } from '@backend/db/client'
-import { products, subCategories } from '@backend/db/schema'
+import { products, subCategories, productImages } from '@backend/db/schema'
 import { eq, and, desc, asc, sql, or, count } from 'drizzle-orm'
-
+import ProductImageService from '@backend/services/productImage.service'
+import productCertificationService from '@backend/services/productCertification.service'
 /**
  * @route POST api/products
  * @desc Tạo sản phẩm mới
@@ -41,6 +42,26 @@ export async function createProduct(req: Request, res: Response, next: NextFunct
  * @desc Lấy danh sách sản phẩm (lọc, tìm kiếm, phân trang, sắp xếp)
  * @access Public
  */
+
+/*
+Note:
+Use a single SQL lateral join to fetch the primary image inline with the products (Postgres LATERAL or DISTINCT ON) — this returns products plus their primary image in a single query. Example (raw SQL):
+SELECT p., pi. FROM products p
+LEFT JOIN LATERAL (
+SELECT * FROM product_images pi
+WHERE pi.product_id = p.id AND pi.is_primary = true
+LIMIT 1
+) pi ON true
+WHERE ... ORDER BY ... LIMIT ... OFFSET ...
+You can run this via Drizzle raw SQL if you prefer one DB roundtrip and no client-side mapping.
+
+Add an index on (product_id, is_primary) to speed up the primary-image lookup:
+CREATE INDEX idx_product_images_product_id_is_primary ON product_images(product_id, is_primary);
+
+If you expect very large pages or huge number of productIds, consider:
+Using LATERAL JOIN (recommended) instead of OR IN list (more efficient).
+Or chunking the IN list if some DB/drivers limit parameter list size.
+*/
 export async function getAllProducts(req: Request, res: Response, next: NextFunction) {
     try {
         const {
@@ -132,6 +153,33 @@ export async function getAllProducts(req: Request, res: Response, next: NextFunc
         const totalPages = Math.ceil(total / limitNum)
         const hasMore = pageNum < totalPages
 
+        // Batch fetch primary images to avoid N+1 queries
+        const productIds = data.map((p) => p.id).filter(Boolean)
+        let imagesByProduct: Record<string, any> = {}
+
+        if (productIds.length > 0) {
+            // Build OR conditions for productIds (fallback if .in is not available)
+            const imgConds = productIds.map((id: string) => eq(productImages.productId, id))
+            const whereCond =
+                imgConds.length === 1
+                    ? and(eq(productImages.isPrimary, true), imgConds[0])
+                    : and(eq(productImages.isPrimary, true), or(...imgConds))
+
+            // fetch all primary images for the page in one query
+            const primaryImages = await db.select().from(productImages).where(whereCond)
+
+            // map by productId for quick lookup
+            imagesByProduct = primaryImages.reduce((acc: Record<string, any>, img: any) => {
+                acc[String(img.productId)] = img
+                return acc
+            }, {})
+        }
+
+        const dataWithImages = data.map((product) => ({
+            ...product,
+            image: imagesByProduct[String(product.id)] ?? null
+        }))
+
         res.status(200).json({
             success: true,
             total,
@@ -139,7 +187,7 @@ export async function getAllProducts(req: Request, res: Response, next: NextFunc
             limit: limitNum,
             totalPages,
             hasMore,
-            data
+            data: dataWithImages
         })
     } catch (error: unknown) {
         next(error)
@@ -159,8 +207,11 @@ export async function getProductById(req: Request<{ id: string }>, res: Response
         if (!product) {
             return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm' })
         }
+        const productImages = await ProductImageService.getImagesByProductId(id)
+        const productCertifications = await productCertificationService.getCertificationsByProductId(id)
+        const detailProduct = { ...product, images: productImages || [], certifications: productCertifications || [] }
 
-        res.status(200).json({ success: true, data: product })
+        res.status(200).json({ success: true, data: { product: detailProduct } })
     } catch (error: unknown) {
         next(error)
     }
