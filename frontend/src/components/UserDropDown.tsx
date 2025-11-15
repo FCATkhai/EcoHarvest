@@ -13,6 +13,7 @@ import type { User } from '@/types/user.type'
 import { Link, useNavigate } from 'react-router'
 import AppPath from '@/constants/AppPath'
 import useAuthStore from '@/store/useAuthStore'
+import { USER_ROLES } from '@/constants/userRoles'
 
 interface UserDropdownProps {
     user: User
@@ -35,7 +36,7 @@ export function UserDropdown({ user }: UserDropdownProps) {
                         <UserIcon className='size-4' /> <span>Profile</span>
                     </Link>
                 </DropdownMenuItem>
-                {user.role === 'admin' && <AdminItem />}
+                {user.role === USER_ROLES.ADMIN && <AdminItem />}
                 <SignOutItem />
             </DropdownMenuContent>
         </DropdownMenu>

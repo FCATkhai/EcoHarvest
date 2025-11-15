@@ -13,6 +13,7 @@ import { z } from 'zod'
 import { passwordSchema } from '@/validation/password'
 import useAuthStore from '@/store/useAuthStore'
 import AppPath from '@/constants/AppPath'
+import { USER_ROLES } from '@/constants/userRoles'
 
 const signInSchema = z.object({
     email: z.email({ message: 'Xin hãy nhập email hợp lệ' }),
@@ -23,6 +24,7 @@ const signInSchema = z.object({
 type SignInValues = z.infer<typeof signInSchema>
 
 export function SignInForm() {
+    const user = useAuthStore((state) => state.user)
     const singIn = useAuthStore((state) => state.signIn)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -43,6 +45,11 @@ export function SignInForm() {
 
         try {
             await singIn(email, password)
+            if (user && user.role === USER_ROLES.ADMIN) {
+                console.log('Redirecting to admin dashboard')
+                navigate(AppPath.admin)
+                return
+            }
             toast.success('Đăng nhập thành công')
             navigate(AppPath.home)
         } catch (err) {

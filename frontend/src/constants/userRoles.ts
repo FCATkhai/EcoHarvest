@@ -1,9 +1,9 @@
 export const USER_ROLES = {
-    Customer: 'customer',
-    Admin: 'admin'
+    CUSTOMER: 'customer',
+    ADMIN: 'admin'
 } as const
 
 export const USER_GROUPS = {
-    ALL_USERS: [USER_ROLES.Customer, USER_ROLES.Admin],
-    ADMINS_ONLY: [USER_ROLES.Admin]
+    ALL_USERS: [USER_ROLES.CUSTOMER, USER_ROLES.ADMIN],
+    ADMINS_ONLY: [USER_ROLES.ADMIN]
 }

@@ -10,3 +10,8 @@
 - [ ] chỉnh sửa response trả về sao cho nhất quán
 - [ ] sửa route backend lại cho hợp lý (order, payment)
 - [ ] fix type trong schema frontend cho chính xác (field ?, null)
+
+## frontend
+
+- [ ] fix navigate admin đăng nhập
+- [ ] add guard handle: not found
