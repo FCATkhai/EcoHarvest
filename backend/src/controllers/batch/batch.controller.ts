@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from 'express'
 import { db } from '@backend/db/client'
 import { batches } from '@backend/db/schema'
 import { eq } from 'drizzle-orm'
-
+import batchService from '@backend/services/batch.service'
+import importReceiptService from '@backend/services/importReceipt.service'
 /**
  * @route POST api/batches
  * @desc Tạo lô hàng mới cho sản phẩm (gắn với phiếu nhập)
@@ -34,6 +35,9 @@ export async function createBatch(req: Request, res: Response, next: NextFunctio
                 notes
             })
             .returning()
+
+        await batchService.syncProductQuantity(productId)
+        await importReceiptService.updateTotalCost(importReceiptId)
 
         res.status(201).json({
             success: true,
@@ -111,6 +115,8 @@ export async function updateBatch(req: Request, res: Response, next: NextFunctio
         if (!updatedBatch) {
             return res.status(404).json({ success: false, message: 'Không tìm thấy lô hàng' })
         }
+        await batchService.syncProductQuantity(updatedBatch.productId)
+        await importReceiptService.updateTotalCost(updatedBatch.importReceiptId)
 
         res.status(200).json({
             success: true,
@@ -135,9 +141,12 @@ export async function deleteBatch(req: Request, res: Response, next: NextFunctio
             .delete(batches)
             .where(eq(batches.id, Number(id)))
             .returning()
-        if (!deletedBatch.length) {
+        if (!deletedBatch.length || !deletedBatch[0]) {
             return res.status(404).json({ success: false, message: 'Không tìm thấy lô hàng' })
         }
+
+        await batchService.syncProductQuantity(deletedBatch[0].productId)
+        await importReceiptService.updateTotalCost(deletedBatch[0].importReceiptId)
 
         res.status(200).json({ success: true, message: 'Xóa lô hàng thành công' })
     } catch (error: unknown) {

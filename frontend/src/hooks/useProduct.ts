@@ -10,6 +10,7 @@ const PRODUCTS_LIST_KEY = ['products'] as const
 const PRODUCT_KEY = (id: string) => ['product', id] as const
 
 //TODO: add stale time, keep previous data
+// không truyền quantity khi tạo hoặc cập nhật sản phẩm
 export function useProducts(query: ListProductQuery = {}) {
     const queryClient = useQueryClient()
 

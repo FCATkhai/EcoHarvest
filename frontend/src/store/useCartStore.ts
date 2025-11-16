@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import cartApi, { type AddCartItemDto } from '@/apis/cart.api'
 import type { Cart, CartItem } from '@/types/schema.type'
-
+import { persist } from 'zustand/middleware'
 interface CartState {
     cart: Cart | null
     items: CartItem[]
@@ -30,82 +30,87 @@ const { fetchCart, addItem, updateItem, removeItem, clearCart } = useCartStore(s
 - Initialize on mount:
 useEffect(() => { fetchCart() }, [fetchCart])
 */
-const useCartStore = create<CartState>((set, get) => ({
-    cart: null,
-    items: [],
-    loading: false,
-    initialized: false,
+const useCartStore = create<CartState>()(
+    persist(
+        (set, get) => ({
+            cart: null,
+            items: [],
+            loading: false,
+            initialized: false,
 
-    fetchCart: async () => {
-        set({ loading: true })
-        try {
-            const res = await cartApi.getCart()
-            if (res && res.data) {
-                set({ cart: res.data.cart ?? null, items: res.data.items ?? [] })
-            } else {
-                set({ cart: null, items: [] })
+            fetchCart: async () => {
+                set({ loading: true })
+                try {
+                    const res = await cartApi.getCart()
+                    if (res && res.data) {
+                        set({ cart: res.data.cart ?? null, items: res.data.items ?? [] })
+                    } else {
+                        set({ cart: null, items: [] })
+                    }
+                } catch (err) {
+                    set({ cart: null, items: [] })
+                    throw err
+                } finally {
+                    set({ loading: false, initialized: true })
+                }
+            },
+
+            addItem: async (payload) => {
+                set({ loading: true })
+                try {
+                    const res = await cartApi.addItem(payload)
+                    if (res && res.data) {
+                        // refresh cart to get consistent state (including server-calculated fields)
+                        await get().fetchCart()
+                    }
+                } catch (err) {
+                    throw err
+                } finally {
+                    set({ loading: false })
+                }
+            },
+
+            updateItem: async (itemId, quantity) => {
+                set({ loading: true })
+                try {
+                    const res = await cartApi.updateItem(itemId, quantity)
+                    if (res && res.data) {
+                        await get().fetchCart()
+                    }
+                } catch (err) {
+                    throw err
+                } finally {
+                    set({ loading: false })
+                }
+            },
+
+            removeItem: async (itemId) => {
+                set({ loading: true })
+                try {
+                    await cartApi.removeItem(itemId)
+                    await get().fetchCart()
+                } catch (err) {
+                    throw err
+                } finally {
+                    set({ loading: false })
+                }
+            },
+
+            clearCart: async () => {
+                set({ loading: true })
+                try {
+                    await cartApi.clear()
+                    set({ cart: null, items: [] })
+                } catch (err) {
+                    throw err
+                } finally {
+                    set({ loading: false })
+                }
             }
-        } catch (err) {
-            set({ cart: null, items: [] })
-            throw err
-        } finally {
-            set({ loading: false, initialized: true })
-        }
-    },
-
-    addItem: async (payload) => {
-        set({ loading: true })
-        try {
-            const res = await cartApi.addItem(payload)
-            if (res && res.data) {
-                // refresh cart to get consistent state (including server-calculated fields)
-                await get().fetchCart()
-            }
-        } catch (err) {
-            throw err
-        } finally {
-            set({ loading: false })
-        }
-    },
-
-    updateItem: async (itemId, quantity) => {
-        set({ loading: true })
-        try {
-            const res = await cartApi.updateItem(itemId, quantity)
-            if (res && res.data) {
-                await get().fetchCart()
-            }
-        } catch (err) {
-            throw err
-        } finally {
-            set({ loading: false })
-        }
-    },
-
-    removeItem: async (itemId) => {
-        set({ loading: true })
-        try {
-            await cartApi.removeItem(itemId)
-            await get().fetchCart()
-        } catch (err) {
-            throw err
-        } finally {
-            set({ loading: false })
-        }
-    },
-
-    clearCart: async () => {
-        set({ loading: true })
-        try {
-            await cartApi.clear()
-            set({ cart: null, items: [] })
-        } catch (err) {
-            throw err
-        } finally {
-            set({ loading: false })
-        }
-    }
-}))
+        }),
+        { name: 'cart-storage' }
+    )
+)
 
 export default useCartStore
 

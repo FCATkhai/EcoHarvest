@@ -25,6 +25,7 @@
         "esbuild": "^0.25.11",
         "express": "^5.1.0",
         "jsonwebtoken": "^9.0.2",
+        "multer": "^2.0.2",
         "postgres": "^3.4.7"
     },
     "devDependencies": {
@@ -33,6 +34,7 @@
         "@types/cors": "^2.8.19",
         "@types/express": "^5.0.3",
         "@types/jsonwebtoken": "^9.0.10",
+        "@types/multer": "^2.0.0",
         "@types/node": "^24.8.1",
         "drizzle-kit": "^0.31.6",
         "eslint": "^9.38.0",

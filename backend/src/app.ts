@@ -9,7 +9,7 @@ const app = express()
 app.use(
     cors({
         origin: 'http://localhost:3000', // Chỉ cho phép frontend origin
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         credentials: true, // Cho phép cookies/sessions cross-origin
         allowedHeaders: ['Content-Type', 'Authorization']
     })
@@ -27,5 +27,7 @@ app.use('/api', router)
 
 // Use Middleware
 app.use(errorHandler)
+
+
 
 export default app

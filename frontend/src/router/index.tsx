@@ -3,6 +3,11 @@ import useAuthStore from '@/store/useAuthStore'
 import MainLayout from '@/layouts/MainLayout'
 import RegisterLayout from '@/layouts/RegisterLayout'
 import AdminLayout from '@/layouts/AdminLayout'
+
+import ManageCategory from '@/pages/Admin/ManageCategory'
+import Dashboard from '@/pages/Admin/Dashboard/Dashboard'
+import ManageBatch from '@/pages/Admin/ManageBatch'
+
 import AppPath from '@/constants/AppPath'
 import Login from '@/pages/Login'
 import SignUp from '@/pages/Register/SignUp'
@@ -10,6 +15,7 @@ import NotFound from '@/pages/NotFound'
 import Forbidden from '@/pages/Forbidden'
 import { USER_ROLES } from '@/constants/userRoles'
 import About from '@/pages/About'
+import ManageProduct from '@/pages/Admin/ManageProduct/ManageProduct'
 
 function ProtectedRoute() {
     const isAuthenticated = useAuthStore((state) => !!state.user)
@@ -72,11 +78,33 @@ export const router = createBrowserRouter([
                 element: <AdminRoute />,
                 children: [
                     {
-                        path: AppPath.admin,
-                        element: <AdminLayout />
+                        path: '',
+                        element: <AdminLayout />,
+                        children: [
+                            {
+                                path: AppPath.admin,
+                                element: <Dashboard />
+                            },
+                            {
+                                path: AppPath.adminCategories,
+                                element: <ManageCategory />
+                            },
+                            {
+                                path: AppPath.adminProducts,
+                                element: <ManageProduct />
+                            },
+                            {
+                                path: AppPath.adminBatches,
+                                element: <ManageBatch />
+                            }
+                        ]
                     }
                 ]
             }
         ]
+    },
+    {
+        path: AppPath.forbidden,
+        element: <Forbidden />
     }
 ])

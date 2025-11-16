@@ -11,7 +11,14 @@
 - [ ] sửa route backend lại cho hợp lý (order, payment)
 - [ ] fix type trong schema frontend cho chính xác (field ?, null)
 
+## backend
+
+- [ ] chuyển sang dùng multer để upload ảnh, file
+- [ ] update policy trong storages, tables
+- [ ] mở rộng ownership guard, hiện tại chỉ hoạt động với những route có userId trong query hoặc params
+
 ## frontend
 
 - [ ] fix navigate admin đăng nhập
 - [ ] add guard handle: not found
+- [ ] update cập nhật UI khi sửa đổi batch thì giá tiền của import receipt chưa được cập nhật trên frontend

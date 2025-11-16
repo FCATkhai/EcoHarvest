@@ -39,7 +39,7 @@ export const authorize =
     }
 
 // chỉ allow admin hoặc chính chủ (dựa vào id trong query param hoặc params)
-
+// chỉ dùng cho các route có id trong params hoặc query
 export const ownershipAuthorize = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const requestUserId = req.query.id || req.params.id

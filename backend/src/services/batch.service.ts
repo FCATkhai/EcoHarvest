@@ -3,7 +3,7 @@ import { batches, orderItems, products } from '../db/schema'
 import { eq, sql, asc, desc } from 'drizzle-orm'
 //TODO: dùng log để ghi nhận các thay đổi về tồn kho theo lô hàng, giúp cập nhật cancel order... chính xác
 // thêm trigger để cập nhật giá trị tổng tồn kho trong bảng products khi có thay đổi trong bảng batches
-// chỉnh sửa 
+// chỉnh sửa
 /**
  * BatchService
  * Dịch vụ quản lý tồn kho theo lô hàng
@@ -67,11 +67,7 @@ class BatchService {
      * FIFO: trừ dần từ các lô hàng cũ nhất
      */
     async deductStockByOrder(productId: string, quantityNeeded: number) {
-        const batchList = await db
-            .select()
-            .from(batches)
-            .where(eq(batches.productId, productId))
-            .orderBy(asc(batches.importDate))
+        const batchList = await db.select().from(batches).where(eq(batches.productId, productId))
 
         if (!batchList.length) {
             throw new Error(`Không còn lô hàng nào cho sản phẩm ${productId}`)
@@ -129,11 +125,7 @@ class BatchService {
             if (productId == null || remainingToRestore == null) continue
 
             // 2. Lấy các lô hàng gần nhất (mới nhập gần đây nhất)
-            const batchList = await db
-                .select()
-                .from(batches)
-                .where(eq(batches.productId, productId))
-                .orderBy(desc(batches.importDate))
+            const batchList = await db.select().from(batches).where(eq(batches.productId, productId))
 
             if (!batchList.length) continue
 

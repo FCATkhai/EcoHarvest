@@ -12,14 +12,14 @@ import { authorize, ownershipAuthorize } from '@backend/middleware/auth.middlewa
 const router = Router()
 
 //TODO: phân lại quyền sao cho hợp lý hơn
-router.post('/', authorize(USER_GROUPS.ALL_USERS), ownershipAuthorize, createOrder)
-router.get('/', authorize(USER_GROUPS.ALL_USERS), ownershipAuthorize, getAllOrders)
-router.get('/:id', authorize(USER_GROUPS.ALL_USERS), ownershipAuthorize, getOrderById)
-router.put('/:id/status', authorize(USER_GROUPS.ALL_USERS), ownershipAuthorize, updateOrderStatus)
-router.patch('/:id/status', authorize(USER_GROUPS.ALL_USERS), ownershipAuthorize, updateOrderStatus)
+router.post('/', authorize(USER_GROUPS.ALL_USERS), createOrder)
+router.get('/', authorize(USER_GROUPS.ALL_USERS), getAllOrders)
+router.get('/:id', authorize(USER_GROUPS.ALL_USERS), getOrderById)
+router.put('/:id/status', authorize(USER_GROUPS.ALL_USERS), updateOrderStatus)
+router.patch('/:id/status', authorize(USER_GROUPS.ALL_USERS), updateOrderStatus)
 
-router.put('/payments/:orderId/status', authorize(USER_GROUPS.ALL_USERS), ownershipAuthorize, updatePaymentStatus)
-router.patch('/payments/:orderId/status', authorize(USER_GROUPS.ALL_USERS), ownershipAuthorize, updatePaymentStatus)
+router.put('/payments/:orderId/status', authorize(USER_GROUPS.ALL_USERS), updatePaymentStatus)
+router.patch('/payments/:orderId/status', authorize(USER_GROUPS.ALL_USERS), updatePaymentStatus)
 
 router.delete('/:id', authorize(USER_GROUPS.ADMINS_ONLY), deleteOrder)
 
