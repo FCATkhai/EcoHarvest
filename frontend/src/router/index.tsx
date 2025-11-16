@@ -13,9 +13,13 @@ import Login from '@/pages/Login'
 import SignUp from '@/pages/Register/SignUp'
 import NotFound from '@/pages/NotFound'
 import Forbidden from '@/pages/Forbidden'
+
+import Products from '@/pages/Products/Products'
+
 import { USER_ROLES } from '@/constants/userRoles'
 import About from '@/pages/About'
 import ManageProduct from '@/pages/Admin/ManageProduct/ManageProduct'
+import ProductDetail from '@/pages/ProductDetail/ProductDetail'
 
 function ProtectedRoute() {
     const isAuthenticated = useAuthStore((state) => !!state.user)
@@ -46,6 +50,14 @@ export const router = createBrowserRouter([
             {
                 path: '/about',
                 element: <About />
+            },
+            {
+                path: AppPath.products,
+                element: <Products />
+            },
+            {
+                path: AppPath.productDetail(':id'),
+                element: <ProductDetail />
             }
         ]
     },

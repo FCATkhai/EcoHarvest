@@ -10,7 +10,7 @@ export default function CartIcon() {
     const items = useCartStore((state) => selectItems(state))
     const itemCount = useCartStore((state) => selectItemCount(state))
     const subtotal = useCartStore((state) => selectSubtotal(state))
-    const fetchCart = useCartStore((state) => selectCartActions(state))
+    // const fetchCart = useCartStore((state) => selectCartActions(state))
 
     const displayItems = items.slice(0, 5)
     const hasMore = items.length > 5
@@ -21,6 +21,11 @@ export default function CartIcon() {
             currency: 'VND'
         }).format(amount)
     }
+
+    // useEffect(() => {
+    //     // chỉ fetch 1 lần khi app mount
+    //     useCartStore.getState().fetchCart()
+    // }, [])
 
     return (
         <HoverCard openDelay={200} closeDelay={100}>

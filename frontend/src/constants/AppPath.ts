@@ -1,12 +1,16 @@
 import { admin } from 'better-auth/plugins/admin'
 
 const AppPath = {
-    home: '/',
+    // home: '/',
+    home: '/products', //tạm thời đổi home thành products
     signIn: '/sign-in',
     signUp: '/sign-up',
     products: '/products',
     productDetail: (id: string) => `/products/${id}`,
     cart: '/cart',
+    checkout: '/checkout',
+    orders: '/orders',
+    orderDetail: (id: string) => `/orders/${id}`,
     profile: '/profile',
     admin: '/admin',
     adminCategories: '/admin/categories',
