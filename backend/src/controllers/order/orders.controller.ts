@@ -4,6 +4,7 @@ import { orders, orderItems, paymentDetails, products } from '@backend/db/schema
 import { eq, and } from 'drizzle-orm'
 import BatchService from '@backend/services/batch.service'
 import UserService from '@backend/services/user.service'
+import CartService from '@backend/services/cart.service'
 /**
  * @route POST api/orders
  * @desc Tạo đơn hàng mới (kèm order items và payment)
@@ -60,6 +61,12 @@ export async function createOrder(req: Request, res: Response, next: NextFunctio
 
             const newPayment = paymentRows[0]
             if (!newPayment) throw new Error('Không thể tạo thông tin thanh toán')
+
+            // 4) Xoá các sản phẩm đã đặt khỏi giỏ hàng
+            await CartService.deleteCartItemsByIds(
+                userId,
+                items.map((item: any) => item.cartItemId)
+            )
 
             return { order: newOrder, payment: newPayment }
         } catch (error) {
