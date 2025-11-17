@@ -202,7 +202,7 @@ export default function ProductDetail() {
         )
     }
 
-    const isOutOfStock = product.quantity && product.quantity <= 0
+    const isOutOfStock = product.quantity === 0 || (product.quantity !== undefined && product.quantity <= 0)
     const isLowStock = product.quantity > 0 && product.quantity <= 10
 
     return (

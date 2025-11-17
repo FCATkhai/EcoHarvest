@@ -16,6 +16,8 @@
 - [ ] chuyển sang dùng multer để upload ảnh, file
 - [ ] update policy trong storages, tables
 - [ ] mở rộng ownership guard, hiện tại chỉ hoạt động với những route có userId trong query hoặc params
+- [ ] consider thêm isChecked vào cart item
+- [ ] xoá item trong cart sau khi tạo order
 
 ## frontend
 

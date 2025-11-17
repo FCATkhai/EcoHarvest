@@ -4,6 +4,7 @@ import { products, subCategories, productImages } from '@backend/db/schema'
 import { eq, and, desc, asc, sql, or, count } from 'drizzle-orm'
 import ProductImageService from '@backend/services/productImage.service'
 import productCertificationService from '@backend/services/productCertification.service'
+import type { ProductImage, ProductCertification } from '@backend/db/schema'
 /**
  * @route POST api/products
  * @desc Tạo sản phẩm mới
@@ -207,8 +208,18 @@ export async function getProductById(req: Request<{ id: string }>, res: Response
         if (!product) {
             return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm' })
         }
-        const productImages = await ProductImageService.getImagesByProductId(id)
-        const productCertifications = await productCertificationService.getCertificationsByProductId(id)
+        let productImages: ProductImage[] = []
+        try {
+            productImages = await ProductImageService.getImagesByProductId(id)
+        } catch (error) {
+            // continue silently if no images found
+        }
+        let productCertifications: ProductCertification[] = []
+        try {
+            productCertifications = await productCertificationService.getCertificationsByProductId(id)
+        } catch (error) {
+            // continue silently if no certifications found
+        }
         const detailProduct = { ...product, images: productImages || [], certifications: productCertifications || [] }
 
         res.status(200).json({ success: true, data: { product: detailProduct } })

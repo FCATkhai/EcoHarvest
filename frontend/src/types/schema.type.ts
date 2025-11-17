@@ -143,6 +143,7 @@ export type Cart = {
     updatedAt?: string | Date
 }
 
+// add isChecked to CartItem
 export type CartItem = {
     id: number
     cartId?: number
@@ -153,4 +154,8 @@ export type CartItem = {
     image?: string | null
     createdAt: Date | string
     updatedAt: Date | string
+}
+
+export type CartItemWithCheck = CartItem & {
+    isChecked: boolean
 }

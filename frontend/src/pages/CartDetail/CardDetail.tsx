@@ -18,8 +18,9 @@ export default function CartDetail() {
     const fetchCart = useCartStore((state) => state.fetchCart)
     const updateItem = useCartStore((state) => state.updateItem)
     const removeItem = useCartStore((state) => state.removeItem)
+    const toggleItemChecked = useCartStore((state) => state.toggleItemChecked)
+    const toggleAllItemsChecked = useCartStore((state) => state.toggleAllItemsChecked)
 
-    const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set())
     const [isUpdating, setIsUpdating] = useState(false)
 
     useEffect(() => {
@@ -28,14 +29,13 @@ export default function CartDetail() {
         })
     }, [fetchCart])
 
-    const allSelected = items.length > 0 && selectedItems.size === items.length
-    const someSelected = selectedItems.size > 0 && selectedItems.size < items.length
+    const checkedItems = items.filter((item) => item.isChecked)
+    const allSelected = items.length > 0 && checkedItems.length === items.length
+    const someSelected = checkedItems.length > 0 && checkedItems.length < items.length
 
     const selectedTotal = useMemo(() => {
-        return items
-            .filter((item) => selectedItems.has(item.id))
-            .reduce((sum, item) => sum + Number(item.price || 0) * item.quantity, 0)
-    }, [items, selectedItems])
+        return checkedItems.reduce((sum, item) => sum + Number(item.price || 0) * item.quantity, 0)
+    }, [checkedItems])
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('vi-VN', {
@@ -45,21 +45,11 @@ export default function CartDetail() {
     }
 
     const handleSelectAll = (checked: boolean) => {
-        if (checked) {
-            setSelectedItems(new Set(items.map((item) => item.id)))
-        } else {
-            setSelectedItems(new Set())
-        }
+        toggleAllItemsChecked(checked)
     }
 
-    const handleSelectItem = (itemId: number, checked: boolean) => {
-        const newSelected = new Set(selectedItems)
-        if (checked) {
-            newSelected.add(itemId)
-        } else {
-            newSelected.delete(itemId)
-        }
-        setSelectedItems(newSelected)
+    const handleSelectItem = (itemId: number) => {
+        toggleItemChecked(itemId)
     }
 
     const handleQuantityChange = async (itemId: number, currentQuantity: number, delta: number) => {
@@ -81,11 +71,6 @@ export default function CartDetail() {
         try {
             setIsUpdating(true)
             await removeItem(itemId)
-            setSelectedItems((prev) => {
-                const newSelected = new Set(prev)
-                newSelected.delete(itemId)
-                return newSelected
-            })
             toast.success('Đã xóa sản phẩm khỏi giỏ hàng')
         } catch (error: any) {
             toast.error(error?.message || 'Có lỗi xảy ra khi xóa sản phẩm')
@@ -95,13 +80,12 @@ export default function CartDetail() {
     }
 
     const handleRemoveSelected = async () => {
-        if (selectedItems.size === 0) return
+        if (checkedItems.length === 0) return
 
         try {
             setIsUpdating(true)
-            await Promise.all(Array.from(selectedItems).map((id) => removeItem(id)))
-            setSelectedItems(new Set())
-            toast.success(`Đã xóa ${selectedItems.size} sản phẩm`)
+            await Promise.all(checkedItems.map((item) => removeItem(item.id)))
+            toast.success(`Đã xóa ${checkedItems.length} sản phẩm`)
         } catch (error: any) {
             toast.error(error?.message || 'Có lỗi xảy ra')
         } finally {
@@ -110,12 +94,11 @@ export default function CartDetail() {
     }
 
     const handleCheckout = () => {
-        if (selectedItems.size === 0) {
+        if (checkedItems.length === 0) {
             toast.error('Vui lòng chọn sản phẩm để thanh toán')
             return
         }
-        // Navigate to checkout with selected items
-        navigate(AppPath.checkout, { state: { selectedItemIds: Array.from(selectedItems) } })
+        navigate(AppPath.checkout)
     }
 
     if (loading && items.length === 0) {
@@ -169,7 +152,7 @@ export default function CartDetail() {
                                     />
                                     <span className='font-medium'>Chọn tất cả ({items.length} sản phẩm)</span>
                                 </div>
-                                {selectedItems.size > 0 && (
+                                {checkedItems.length > 0 && (
                                     <Button
                                         variant='ghost'
                                         size='sm'
@@ -177,7 +160,7 @@ export default function CartDetail() {
                                         disabled={isUpdating}
                                     >
                                         <Trash2 className='h-4 w-4 mr-2' />
-                                        Xóa ({selectedItems.size})
+                                        Xóa ({checkedItems.length})
                                     </Button>
                                 )}
                             </div>
@@ -192,8 +175,8 @@ export default function CartDetail() {
                                     {/* Checkbox */}
                                     <div className='flex items-center pt-2'>
                                         <Checkbox
-                                            checked={selectedItems.has(item.id)}
-                                            onCheckedChange={(checked) => handleSelectItem(item.id, !!checked)}
+                                            checked={item.isChecked}
+                                            onCheckedChange={() => handleSelectItem(item.id)}
                                         />
                                     </div>
 
@@ -292,7 +275,7 @@ export default function CartDetail() {
                             <div className='space-y-2'>
                                 <div className='flex justify-between text-sm'>
                                     <span className='text-muted-foreground'>Sản phẩm đã chọn:</span>
-                                    <span className='font-medium'>{selectedItems.size}</span>
+                                    <span className='font-medium'>{checkedItems.length}</span>
                                 </div>
                                 <div className='flex justify-between'>
                                     <span className='font-medium'>Tổng cộng:</span>
@@ -304,7 +287,7 @@ export default function CartDetail() {
 
                             <Separator />
 
-                            {selectedItems.size === 0 && (
+                            {checkedItems.length === 0 && (
                                 <div className='flex items-start gap-2 text-sm text-muted-foreground'>
                                     <AlertCircle className='h-4 w-4 mt-0.5 shrink-0' />
                                     <span>Vui lòng chọn sản phẩm để thanh toán</span>
@@ -313,11 +296,11 @@ export default function CartDetail() {
 
                             <Button
                                 onClick={handleCheckout}
-                                disabled={selectedItems.size === 0 || isUpdating}
+                                disabled={checkedItems.length === 0 || isUpdating}
                                 className='w-full'
                                 size='lg'
                             >
-                                Mua Hàng ({selectedItems.size})
+                                Mua Hàng ({checkedItems.length})
                             </Button>
 
                             <Button variant='outline' asChild className='w-full'>

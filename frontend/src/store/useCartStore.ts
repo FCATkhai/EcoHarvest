@@ -1,35 +1,34 @@
 import { create } from 'zustand'
 import cartApi, { type AddCartItemDto } from '@/apis/cart.api'
-import type { Cart, CartItem } from '@/types/schema.type'
+import type { Cart, CartItem, CartItemWithCheck } from '@/types/schema.type'
 import { persist } from 'zustand/middleware'
 interface CartState {
     cart: Cart | null
-    items: CartItem[]
+    items: CartItemWithCheck[]
     loading: boolean
     initialized: boolean
+
     fetchCart: () => Promise<void>
     addItem: (payload: AddCartItemDto) => Promise<void>
     updateItem: (itemId: number, quantity: number) => Promise<void>
     removeItem: (itemId: number) => Promise<void>
+
+    toggleItemChecked: (itemId: number) => void
+    toggleAllItemsChecked: (checked: boolean) => void
+
     clearCart: () => Promise<void>
+}
+
+const normalizeCartItems = (items: Array<CartItem & Partial<{ isChecked: boolean }>>): CartItemWithCheck[] => {
+    return items.map((item) => ({
+        ...item,
+        isChecked: item.isChecked ?? false
+    }))
 }
 
 /**
  * useCartStore quản lý giỏ hàng: tải, thêm, sửa, xóa và xóa toàn bộ.
  */
-
-/*
-Usage:
-- Read state:
-const cart = useCartStore(s => s.cart)
-const items = useCartStore(s => s.items)
-const count = useCartStore(selectItemCount)
-const subtotal = useCartStore(selectSubtotal)
-- Call actions:
-const { fetchCart, addItem, updateItem, removeItem, clearCart } = useCartStore(selectCartActions)
-- Initialize on mount:
-useEffect(() => { fetchCart() }, [fetchCart])
-*/
 const useCartStore = create<CartState>()(
     persist(
         (set, get) => ({
@@ -43,7 +42,7 @@ const useCartStore = create<CartState>()(
                 try {
                     const res = await cartApi.getCart()
                     if (res && res.data) {
-                        set({ cart: res.data.cart ?? null, items: res.data.items ?? [] })
+                        set({ cart: res.data.cart ?? null, items: normalizeCartItems(res.data.items ?? []) })
                     } else {
                         set({ cart: null, items: [] })
                     }
@@ -96,6 +95,30 @@ const useCartStore = create<CartState>()(
                 }
             },
 
+            toggleItemChecked: (itemId: number) => {
+                set((state) => ({
+                    items: state.items.map((item) =>
+                        item.id === itemId ? { ...item, isChecked: !item.isChecked } : item
+                    )
+                }))
+            },
+
+            toggleAllItemsChecked: (checked: boolean) => {
+                set((state) => ({
+                    items: state.items.map((item) => ({ ...item, isChecked: checked }))
+                }))
+            },
+
+            getCheckedItemIds: () => {
+                return get()
+                    .items.filter((it) => it.isChecked)
+                    .map((it) => it.id)
+            },
+
+            getCheckedItems: () => {
+                return get().items.filter((it) => it.isChecked)
+            },
+
             clearCart: async () => {
                 set({ loading: true })
                 try {
@@ -114,7 +137,6 @@ const useCartStore = create<CartState>()(
 
 export default useCartStore
 
-//TODO: fix error may occur when repeatedly calling setState
 // Derived selectors
 export const selectItemCount = (s: ReturnType<typeof useCartStore.getState>) =>
     (s.items ?? []).reduce((acc, it) => acc + (it.quantity ?? 0), 0)
