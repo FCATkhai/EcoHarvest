@@ -1,10 +1,8 @@
-//TODO: fix repeatedly calls setState error
-import { useState, useMemo } from 'react'
+//TODO: change "mua ngay" behavior to go to checkout directly
+import { useState, useMemo, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router'
 import { useProduct } from '@/hooks/useProduct'
-import { useProductImages } from '@/hooks/useProductImage'
-import { useProductCertifications } from '@/hooks/useProductCertification'
-import useCartStore, { selectCartActions } from '@/store/useCartStore'
+import useCartStore from '@/store/useCartStore'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -20,30 +18,70 @@ import {
     Award,
     Calendar,
     FileCheck,
-    AlertCircle
+    AlertCircle,
+    ChevronLeft,
+    ChevronRight
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import PlaceHolderProduct from '@/assets/placeholder-product.svg'
 
 export default function ProductDetail() {
     const { id } = useParams<{ id: string }>()
     const navigate = useNavigate()
     const [quantity, setQuantity] = useState(1)
     const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+    const [imageBarStartIndex, setImageBarStartIndex] = useState(0)
     const [isAddingToCart, setIsAddingToCart] = useState(false)
 
     const { product, isLoading, isError } = useProduct(id)
-    const { images } = useProductImages(id)
-    const { certifications } = useProductCertifications(id)
-    const { addItem } = useCartStore(selectCartActions)
+    const addItem = useCartStore((state) => state.addItem)
 
-    // Get primary image or first image
+    // Get images and certifications from product
+    const images = product?.images || []
+    const certifications = product?.certifications || []
+
+    // Organize images: primary first, then others
     const displayImages = useMemo(() => {
-        if (!images || images.length === 0) return [{ imageUrl: '/placeholder-product.png', altText: 'Product' }]
+        if (!images || images.length === 0) return [{ imageUrl: PlaceHolderProduct, altText: 'Product' }]
         const sorted = [...images].sort((a, b) => (b.isPrimary ? 1 : 0) - (a.isPrimary ? 1 : 0))
         return sorted
     }, [images])
+    // const displayImages = useMemo(() => {
+    //     if (!images || images.length === 0) {
+    //         return [{ imageUrl: PlaceHolderProduct, altText: 'Product', isPrimary: false }]
+    //     }
+    //     return [...images]
+    //         .sort((a, b) => (b.isPrimary ? 1 : 0) - (a.isPrimary ? 1 : 0))
+    //         .map((img) => ({
+    //             ...img,
+    //             imageUrl: img.imageUrl || PlaceHolderProduct // đảm bảo luôn có URL hợp lệ
+    //         }))
+    // }, [images])
 
-    const selectedImage = displayImages[selectedImageIndex]
+    // Ensure selectedImageIndex is within bounds
+    const safeSelectedImageIndex = Math.min(selectedImageIndex, displayImages.length - 1)
+    const selectedImage = displayImages[safeSelectedImageIndex]
+    const maxVisibleImages = 4
+    const hasMultipleImages = displayImages.length > 1
+    const visibleImages = displayImages.slice(imageBarStartIndex, imageBarStartIndex + maxVisibleImages)
+
+    // Reset image selection when product changes or when displayImages changes
+    useEffect(() => {
+        setSelectedImageIndex(0)
+        setImageBarStartIndex(0)
+    }, [id])
+
+    // Keep selectedImageIndex in bounds when displayImages changes
+    // useEffect(() => {
+    //     if (selectedImageIndex >= displayImages.length) {
+    //         setSelectedImageIndex(Math.max(0, displayImages.length - 1))
+    //     }
+    // }, [displayImages.length, selectedImageIndex])
+    useEffect(() => {
+        if (selectedImageIndex >= displayImages.length) {
+            setSelectedImageIndex(displayImages.length > 0 ? displayImages.length - 1 : 0)
+        }
+    }, [displayImages.length]) // Không cần selectedImageIndex vào deps nếu logic chỉ phụ thuộc vào displayImages.length
 
     const formatCurrency = (amount: number | string) => {
         return new Intl.NumberFormat('vi-VN', {
@@ -62,6 +100,39 @@ export default function ProductDetail() {
         if (newQuantity >= 1 && newQuantity <= (product?.quantity || 0)) {
             setQuantity(newQuantity)
         }
+    }
+
+    const handleImageNavigation = (direction: 'prev' | 'next') => {
+        if (displayImages.length <= 1) return
+
+        if (direction === 'prev') {
+            // Go to previous image
+            const newIndex = selectedImageIndex > 0 ? selectedImageIndex - 1 : displayImages.length - 1
+            setSelectedImageIndex(newIndex)
+
+            // Adjust image bar if needed
+            if (newIndex < imageBarStartIndex) {
+                setImageBarStartIndex(Math.max(0, newIndex))
+            } else if (newIndex >= displayImages.length - maxVisibleImages && displayImages.length > maxVisibleImages) {
+                setImageBarStartIndex(Math.max(0, displayImages.length - maxVisibleImages))
+            }
+        } else {
+            // Go to next image
+            const newIndex = selectedImageIndex < displayImages.length - 1 ? selectedImageIndex + 1 : 0
+            setSelectedImageIndex(newIndex)
+
+            // Adjust image bar if needed
+            if (newIndex >= imageBarStartIndex + maxVisibleImages) {
+                setImageBarStartIndex(Math.min(newIndex, displayImages.length - maxVisibleImages))
+            } else if (newIndex === 0) {
+                setImageBarStartIndex(0)
+            }
+        }
+    }
+
+    const handleImageSelect = (index: number) => {
+        const safeIndex = Math.max(0, Math.min(index, displayImages.length - 1))
+        setSelectedImageIndex(safeIndex)
     }
 
     const handleAddToCart = async () => {
@@ -135,7 +206,7 @@ export default function ProductDetail() {
     const isLowStock = product.quantity > 0 && product.quantity <= 10
 
     return (
-        <div className='container mx-auto py-6 space-y-6'>
+        <div className='container mx-auto py-6 px-10 space-y-6'>
             {/* Breadcrumb */}
             <div className='flex items-center gap-2 text-sm text-muted-foreground'>
                 <Link to='/products' className='hover:text-foreground transition-colors'>
@@ -154,10 +225,10 @@ export default function ProductDetail() {
             </Button>
 
             {/* Main Content */}
-            <div className='grid md:grid-cols-2 gap-8'>
+            <div className='grid md:grid-cols-6 gap-8'>
                 {/* Image Gallery */}
-                <div className='space-y-4'>
-                    <Card className='overflow-hidden'>
+                <div className='space-y-4 col-span-2'>
+                    <Card className='overflow-hidden py-0'>
                         <CardContent className='p-0'>
                             <div className='relative aspect-square bg-muted'>
                                 <img
@@ -165,11 +236,13 @@ export default function ProductDetail() {
                                     alt={selectedImage.altText || product.name}
                                     className='w-full h-full object-cover'
                                     onError={(e) => {
-                                        e.currentTarget.src = '/placeholder-product.png'
+                                        if (e.currentTarget.src !== PlaceHolderProduct) {
+                                            e.currentTarget.src = PlaceHolderProduct
+                                        }
                                     }}
                                 />
                                 {isOutOfStock && (
-                                    <div className='absolute inset-0 bg-black/60 flex items-center justify-center'>
+                                    <div className='absolute inset-0 bg-black/60 opacity-70 flex items-center justify-center'>
                                         <Badge variant='destructive' className='text-lg px-4 py-2'>
                                             Hết hàng
                                         </Badge>
@@ -180,31 +253,62 @@ export default function ProductDetail() {
                     </Card>
 
                     {/* Thumbnail Gallery */}
-                    {displayImages.length > 1 && (
-                        <div className='flex gap-2 overflow-x-auto pb-2'>
-                            {displayImages.map((img, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => setSelectedImageIndex(index)}
-                                    className={`shrink-0 relative w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${
-                                        index === selectedImageIndex
-                                            ? 'border-primary'
-                                            : 'border-transparent hover:border-muted-foreground'
-                                    }`}
-                                >
-                                    <img
-                                        src={img.imageUrl}
-                                        alt={img.altText || `Image ${index + 1}`}
-                                        className='w-full h-full object-cover'
-                                    />
-                                </button>
-                            ))}
+                    {hasMultipleImages && (
+                        <div className='flex items-center gap-2 justify-center'>
+                            {/* Previous Button */}
+                            <Button
+                                variant='outline'
+                                size='icon'
+                                onClick={() => handleImageNavigation('prev')}
+                                className='shrink-0'
+                            >
+                                <ChevronLeft className='h-4 w-4' />
+                            </Button>
+
+                            {/* Image Thumbnails */}
+                            <div className='flex gap-2 overflow-hidden'>
+                                {visibleImages.map((img, visibleIndex) => {
+                                    const actualIndex = imageBarStartIndex + visibleIndex
+                                    return (
+                                        <button
+                                            key={actualIndex}
+                                            onClick={() => handleImageSelect(actualIndex)}
+                                            className={`shrink-0 relative w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${
+                                                actualIndex === selectedImageIndex
+                                                    ? 'border-primary'
+                                                    : 'border-transparent hover:border-muted-foreground'
+                                            }`}
+                                        >
+                                            <img
+                                                src={img.imageUrl || PlaceHolderProduct}
+                                                alt={img.altText || `Image ${actualIndex + 1}`}
+                                                className='w-full h-full object-cover'
+                                                onError={(e) => {
+                                                    if (e.currentTarget.src !== PlaceHolderProduct) {
+                                                        e.currentTarget.src = PlaceHolderProduct
+                                                    }
+                                                }}
+                                            />
+                                        </button>
+                                    )
+                                })}
+                            </div>
+
+                            {/* Next Button */}
+                            <Button
+                                variant='outline'
+                                size='icon'
+                                onClick={() => handleImageNavigation('next')}
+                                className='shrink-0'
+                            >
+                                <ChevronRight className='h-4 w-4' />
+                            </Button>
                         </div>
                     )}
                 </div>
 
                 {/* Product Info */}
-                <div className='space-y-6'>
+                <div className='space-y-6 col-span-4'>
                     <div>
                         <h1 className='text-3xl font-bold mb-2'>{product.name}</h1>
                         {product.description && <p className='text-muted-foreground'>{product.description}</p>}

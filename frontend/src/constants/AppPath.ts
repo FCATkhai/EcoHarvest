@@ -1,5 +1,3 @@
-import { admin } from 'better-auth/plugins/admin'
-
 const AppPath = {
     // home: '/',
     home: '/products', //tạm thời đổi home thành products

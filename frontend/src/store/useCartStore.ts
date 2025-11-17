@@ -114,23 +114,9 @@ const useCartStore = create<CartState>()(
 
 export default useCartStore
 
-// Selectors for convenient usage in components (no extra wrapper hook needed)
-export const selectCart = (s: ReturnType<typeof useCartStore.getState>) => s.cart
-export const selectItems = (s: ReturnType<typeof useCartStore.getState>) => s.items
-export const selectLoading = (s: ReturnType<typeof useCartStore.getState>) => s.loading
-export const selectInitialized = (s: ReturnType<typeof useCartStore.getState>) => s.initialized
-
+//TODO: fix error may occur when repeatedly calling setState
 // Derived selectors
 export const selectItemCount = (s: ReturnType<typeof useCartStore.getState>) =>
     (s.items ?? []).reduce((acc, it) => acc + (it.quantity ?? 0), 0)
 export const selectSubtotal = (s: ReturnType<typeof useCartStore.getState>) =>
     (s.items ?? []).reduce((sum, it) => sum + Number(it.price ?? 0) * (it.quantity ?? 0), 0)
-
-// Action selector to grab stable action references at once
-export const selectCartActions = (s: ReturnType<typeof useCartStore.getState>) => ({
-    fetchCart: s.fetchCart,
-    addItem: s.addItem,
-    updateItem: s.updateItem,
-    removeItem: s.removeItem,
-    clearCart: s.clearCart
-})

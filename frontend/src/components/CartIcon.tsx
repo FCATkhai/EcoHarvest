@@ -1,16 +1,16 @@
-import { useEffect } from 'react'
 import { Link } from 'react-router'
 import { ShoppingCart } from 'lucide-react'
-import useCartStore, { selectItems, selectItemCount, selectSubtotal, selectCartActions } from '@/store/useCartStore'
+import useCartStore, { selectItemCount, selectSubtotal } from '@/store/useCartStore'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import AppPath from '@/constants/AppPath'
 
 export default function CartIcon() {
-    const items = useCartStore((state) => selectItems(state))
+    const items = useCartStore((state) => state.items)
     const itemCount = useCartStore((state) => selectItemCount(state))
     const subtotal = useCartStore((state) => selectSubtotal(state))
-    // const fetchCart = useCartStore((state) => selectCartActions(state))
+    // const fetchCart = useCartStore((state) => state.fetchCart)
 
     const displayItems = items.slice(0, 5)
     const hasMore = items.length > 5
@@ -30,7 +30,7 @@ export default function CartIcon() {
     return (
         <HoverCard openDelay={200} closeDelay={100}>
             <HoverCardTrigger asChild>
-                <Link to='/cart' className='relative inline-flex items-center'>
+                <Link to={AppPath.cart} className='relative inline-flex items-center'>
                     <Button variant='ghost' size='icon' className='relative'>
                         <ShoppingCart className='h-5 w-5' />
                         {itemCount > 0 && (
@@ -95,7 +95,7 @@ export default function CartIcon() {
                                 <span>{formatCurrency(subtotal)}</span>
                             </div>
                             <Button asChild className='w-full'>
-                                <Link to='/cart'>Xem giỏ hàng</Link>
+                                <Link to={AppPath.cart}>Xem giỏ hàng</Link>
                             </Button>
                         </div>
                     </div>

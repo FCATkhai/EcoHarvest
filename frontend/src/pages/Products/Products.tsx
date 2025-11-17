@@ -26,7 +26,7 @@ import {
     PaginationPrevious,
     PaginationEllipsis
 } from '@/components/ui/pagination'
-import { ChevronDown, ShoppingCart, Filter, ArrowUpDown, WheatIcon } from 'lucide-react'
+import { ChevronDown, ShoppingCart, Filter, ArrowUpDown } from 'lucide-react'
 import type { Product } from '@/types/schema.type'
 import PlaceHoderProduct from '@/assets/placeholder-product.svg'
 

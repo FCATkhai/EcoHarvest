@@ -15,11 +15,12 @@ import NotFound from '@/pages/NotFound'
 import Forbidden from '@/pages/Forbidden'
 
 import Products from '@/pages/Products/Products'
+import ProductDetail from '@/pages/ProductDetail'
+import CardDetail from '@/pages/CartDetail'
 
 import { USER_ROLES } from '@/constants/userRoles'
 import About from '@/pages/About'
 import ManageProduct from '@/pages/Admin/ManageProduct/ManageProduct'
-import ProductDetail from '@/pages/ProductDetail/ProductDetail'
 
 function ProtectedRoute() {
     const isAuthenticated = useAuthStore((state) => !!state.user)
@@ -110,6 +111,16 @@ export const router = createBrowserRouter([
                                 element: <ManageBatch />
                             }
                         ]
+                    },
+                    {
+                        path: '',
+                        element: <MainLayout />,
+                        children: [
+                            {
+                                path: AppPath.cart,
+                                element: <CardDetail />
+                            }
+                        ]
                     }
                 ]
             }
@@ -118,5 +129,9 @@ export const router = createBrowserRouter([
     {
         path: AppPath.forbidden,
         element: <Forbidden />
+    },
+    {
+        path: '*',
+        element: <NotFound />
     }
 ])
