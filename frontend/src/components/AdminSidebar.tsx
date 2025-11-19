@@ -59,6 +59,17 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
                         isActive: isActive(AppPath.adminBatches)
                     }
                 ]
+            },
+            {
+                title: 'Đơn hàng',
+                url: '#',
+                items: [
+                    {
+                        title: 'Quản lý đơn hàng',
+                        url: AppPath.adminOrders,
+                        isActive: isActive(AppPath.adminOrders)
+                    }
+                ]
             }
         ]
     }

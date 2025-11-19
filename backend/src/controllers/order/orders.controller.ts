@@ -1,10 +1,13 @@
 import { Request, Response, NextFunction } from 'express'
 import { db } from '@backend/db/client'
 import { orders, orderItems, paymentDetails, products, productImages } from '@backend/db/schema/'
-import { eq, and } from 'drizzle-orm'
+import { eq, and, sql, asc, desc } from 'drizzle-orm'
 import BatchService from '@backend/services/batch.service'
 import UserService from '@backend/services/user.service'
 import CartService from '@backend/services/cart.service'
+import { ORDER_STATUSES, PAYMENT_STATUSES } from '@backend/constants/order'
+import { USER_ROLES } from '@backend/constants/userRoles'
+
 /**
  * @route POST api/orders
  * @desc Tạo đơn hàng mới (kèm order items và payment)
@@ -111,11 +114,104 @@ export async function getAllOrders(req: Request, res: Response, next: NextFuncti
         const role = req.user.role
         const userId = req.user.id
 
-        const query =
-            role === 'admin' ? db.select().from(orders) : db.select().from(orders).where(eq(orders.userId, userId))
+        // Query params
+        const {
+            page = '1',
+            limit = '10',
+            search = '', // search by order id or user id (admin only also userId)
+            order_status = '', // filter order status
+            payment_status = '', // filter payment status
+            sort_by = 'created_at', // created_at | updated_at
+            sort = 'desc' // asc | desc
+        } = req.query as Record<string, string>
 
-        const result = await query
-        res.status(200).json({ success: true, data: result })
+        const pageNum = Math.max(1, parseInt(page, 10) || 1)
+        const limitNum = Math.max(1, parseInt(limit, 10) || 10)
+        const offset = (pageNum - 1) * limitNum
+
+        // Build conditions
+        const whereConditions: any[] = []
+
+        // Role-based visibility
+        if (role !== USER_ROLES.ADMIN) {
+            whereConditions.push(eq(orders.userId, userId))
+        }
+
+        // Order status filter
+        const allowedOrderStatuses = ORDER_STATUSES
+        if (order_status && allowedOrderStatuses.includes(order_status as any)) {
+            whereConditions.push(eq(orders.status, order_status as any))
+        }
+
+        // Payment status filter (requires join)
+        const allowedPaymentStatuses = PAYMENT_STATUSES
+        const filterPaymentStatus = payment_status && allowedPaymentStatuses.includes(payment_status as any)
+        if (filterPaymentStatus) {
+            whereConditions.push(eq(paymentDetails.status, payment_status as any))
+        }
+
+        // Search (order id or user id / delivery address)
+        if (search && search.trim().length > 0) {
+            const keyword = `%${search.toLowerCase()}%`
+            // Cast uuid to text for LIKE search
+            whereConditions.push(
+                role === 'admin'
+                    ? sql`(lower(${orders.id}::text) LIKE ${keyword} OR lower(${orders.userId}::text) LIKE ${keyword} OR lower(${orders.deliveryAddress}) LIKE ${keyword})`
+                    : sql`(lower(${orders.id}::text) LIKE ${keyword} OR lower(${orders.deliveryAddress}) LIKE ${keyword})`
+            )
+        }
+
+        // Sorting
+        const allowedSortFields = ['created_at', 'updated_at']
+        const safeSortBy = allowedSortFields.includes(sort_by) ? sort_by : 'created_at'
+        const sortColumn = safeSortBy === 'updated_at' ? orders.updatedAt : orders.createdAt
+        const orderExpr = sort === 'asc' ? asc(sortColumn) : desc(sortColumn)
+
+        // Base query with left join payment details
+        const baseQueryBuilder = db
+            .select({
+                id: orders.id,
+                userId: orders.userId,
+                total: orders.total,
+                status: orders.status,
+                deliveryAddress: orders.deliveryAddress,
+                createdAt: orders.createdAt,
+                updatedAt: orders.updatedAt,
+                paymentStatus: paymentDetails.status
+            })
+            .from(orders)
+            .leftJoin(paymentDetails, eq(paymentDetails.orderId, orders.id))
+            .$dynamic()
+
+        const finalQuery =
+            whereConditions.length > 0 ? baseQueryBuilder.where(and(...whereConditions)) : baseQueryBuilder
+
+        const data = await finalQuery.orderBy(orderExpr).limit(limitNum).offset(offset)
+
+        // Count total
+        const countQueryBuilder = db
+            .select({ count: sql<number>`count(*)` })
+            .from(orders)
+            .leftJoin(paymentDetails, eq(paymentDetails.orderId, orders.id))
+            .$dynamic()
+
+        const finalCountQuery =
+            whereConditions.length > 0 ? countQueryBuilder.where(and(...whereConditions)) : countQueryBuilder
+
+        const totalRows = await finalCountQuery
+        const total = Number(totalRows[0]?.count || 0)
+        const totalPages = Math.ceil(total / limitNum)
+        const hasMore = pageNum < totalPages
+
+        res.status(200).json({
+            success: true,
+            total,
+            page: pageNum,
+            limit: limitNum,
+            totalPages,
+            hasMore,
+            data
+        })
     } catch (error: unknown) {
         next(error)
     }

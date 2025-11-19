@@ -1,6 +1,7 @@
 import axios from '@/lib/axios'
 import type { ApiResponse } from '@/types/apiResponse.type'
 import type { Order, OrderItem, PaymentDetail } from '@/types/schema.type'
+import type { OrderStatus, PaymentStatus } from '@/constants/order'
 // Base path (axios instance already prefixes /api)
 const API_URL = '/orders'
 
@@ -11,6 +12,26 @@ export interface CreateOrderDto {
     deliveryAddress: string
 }
 
+export interface GetOrdersParams {
+    page?: number
+    limit?: number
+    search?: string
+    order_status?: OrderStatus
+    payment_status?: PaymentStatus
+    sort_by?: 'created_at' | 'updated_at'
+    sort?: 'asc' | 'desc'
+}
+
+export interface OrdersResponse {
+    success: boolean
+    total: number
+    page: number
+    limit: number
+    totalPages: number
+    hasMore: boolean
+    data: (Order & { paymentStatus?: string | null })[]
+}
+
 export const orderApi = {
     // POST /api/orders
     async create(payload: CreateOrderDto) {
@@ -18,9 +39,9 @@ export const orderApi = {
         return res.data
     },
 
-    // GET /api/orders
-    async getAll() {
-        const res = await axios.get<ApiResponse<Order[]>>(API_URL)
+    // GET /api/orders with pagination and filters
+    async getAll(params?: GetOrdersParams) {
+        const res = await axios.get<OrdersResponse>(API_URL, { params })
         return res.data
     },
 

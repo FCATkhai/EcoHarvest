@@ -1,18 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import orderApi, { type CreateOrderDto } from '@/apis/order.api'
+import orderApi, { type CreateOrderDto, type GetOrdersParams } from '@/apis/order.api'
 import type { Order, OrderItem, PaymentDetail } from '@/types/schema.type'
 
 const ORDERS_LIST_KEY = ['orders'] as const
 const ORDER_KEY = (id: string) => ['order', id] as const
 
 //TODO: add stale time, keep previous data, remove any types
-export function useOrders() {
+export function useOrders(params?: GetOrdersParams) {
     const queryClient = useQueryClient()
 
     const listQuery = useQuery({
-        queryKey: ORDERS_LIST_KEY,
+        queryKey: params ? [...ORDERS_LIST_KEY, params] : ORDERS_LIST_KEY,
         queryFn: async () => {
-            const res = await orderApi.getAll()
+            const res = await orderApi.getAll(params)
             return res
         }
     })
@@ -62,7 +62,12 @@ export function useOrders() {
 
     return {
         list: listQuery.data ?? null,
-        orders: (listQuery.data?.data as Order[]) ?? ([] as Order[]),
+        orders: listQuery.data?.data ?? ([] as (Order & { paymentStatus?: string | null })[]),
+        total: listQuery.data?.total ?? 0,
+        page: listQuery.data?.page ?? 1,
+        limit: listQuery.data?.limit ?? 10,
+        totalPages: listQuery.data?.totalPages ?? 0,
+        hasMore: listQuery.data?.hasMore ?? false,
 
         isLoading: listQuery.isLoading,
         isError: listQuery.isError,

@@ -7,6 +7,7 @@ import AdminLayout from '@/layouts/AdminLayout'
 import ManageCategory from '@/pages/Admin/ManageCategory'
 import Dashboard from '@/pages/Admin/Dashboard/Dashboard'
 import ManageBatch from '@/pages/Admin/ManageBatch'
+import ManageOrder from '@/pages/Admin/ManageOrder'
 
 import AppPath from '@/constants/AppPath'
 import Login from '@/pages/Login'
@@ -112,6 +113,10 @@ export const router = createBrowserRouter([
                             {
                                 path: AppPath.adminBatches,
                                 element: <ManageBatch />
+                            },
+                            {
+                                path: AppPath.adminOrders,
+                                element: <ManageOrder />
                             }
                         ]
                     },
