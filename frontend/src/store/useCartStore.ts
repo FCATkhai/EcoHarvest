@@ -17,6 +17,7 @@ interface CartState {
     toggleAllItemsChecked: (checked: boolean) => void
 
     clearCart: () => Promise<void>
+    clearCartSession: () => void
 }
 
 const normalizeCartItems = (items: Array<CartItem & Partial<{ isChecked: boolean }>>): CartItemWithCheck[] => {
@@ -129,6 +130,11 @@ const useCartStore = create<CartState>()(
                 } finally {
                     set({ loading: false })
                 }
+            },
+
+            //do not clear cart data on backend
+            clearCartSession: () => {
+                set({ cart: null, items: [], initialized: false })
             }
         }),
         { name: 'cart-storage' }

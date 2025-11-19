@@ -1,4 +1,5 @@
-import { LogOutIcon, ShieldIcon, UserIcon } from 'lucide-react'
+import { LogOutIcon, ShieldIcon, UserIcon, ReceiptText } from 'lucide-react'
+
 import { toast } from 'react-hot-toast'
 import { Button } from './ui/button'
 import {
@@ -34,6 +35,11 @@ export function UserDropdown({ user }: UserDropdownProps) {
                 <DropdownMenuItem asChild>
                     <Link to={AppPath.profile}>
                         <UserIcon className='size-4' /> <span>Profile</span>
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link to={AppPath.orders}>
+                        <ReceiptText className='size-4' /> <span>Đơn hàng</span>
                     </Link>
                 </DropdownMenuItem>
                 {user.role === USER_ROLES.ADMIN && <AdminItem />}

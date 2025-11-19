@@ -15,6 +15,7 @@ export default function CartDetail() {
     const items = useCartStore((state) => state.items)
     const loading = useCartStore((state) => state.loading)
 
+    const CartInitialized = useCartStore((state) => state.initialized)
     const fetchCart = useCartStore((state) => state.fetchCart)
     const updateItem = useCartStore((state) => state.updateItem)
     const removeItem = useCartStore((state) => state.removeItem)
@@ -24,10 +25,12 @@ export default function CartDetail() {
     const [isUpdating, setIsUpdating] = useState(false)
 
     useEffect(() => {
-        fetchCart().catch((err) => {
-            console.error('Failed to fetch cart:', err)
-        })
-    }, [fetchCart])
+        if (!CartInitialized) {
+            fetchCart().catch((err) => {
+                console.error('Failed to fetch cart:', err)
+            })
+        }
+    }, [fetchCart, CartInitialized])
 
     const checkedItems = items.filter((item) => item.isChecked)
     const allSelected = items.length > 0 && checkedItems.length === items.length

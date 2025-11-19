@@ -1,6 +1,5 @@
 const AppPath = {
-    // home: '/',
-    home: '/products', //tạm thời đổi home thành products
+    home: '/',
     signIn: '/sign-in',
     signUp: '/sign-up',
     products: '/products',

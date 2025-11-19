@@ -42,7 +42,7 @@ export const authorize =
 // chỉ dùng cho các route có id trong params hoặc query
 export const ownershipAuthorize = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const requestUserId = req.query.id || req.params.id
+        const requestUserId = req.query.id || req.params.id || req.params.userId || req.query.userId
 
         if (!requestUserId) {
             return res.status(400).json({ error: 'Missing user id in params or query' })

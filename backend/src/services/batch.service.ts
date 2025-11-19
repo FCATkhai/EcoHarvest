@@ -105,6 +105,60 @@ class BatchService {
             updatedBatches
         }
     }
+    /**
+     * Phục hồi tồn kho cho sản phẩm khi tạo đơn hàng bị lỗi (rollback tại controller)
+     * Logic: cộng trả về số lượng đã trừ vào các lô hàng theo thứ tự đã lấy ở deduct (ở hiện tại chưa có log thứ tự nên lấy lại danh sách như ban đầu).
+     * - Không cho quantityRemaining vượt quá quantityImported
+     * - Nếu quantityToRestore lớn hơn phần có thể phục hồi (vượt dung lượng lô) sẽ cộng tối đa và ghi nhận phần còn lại (không nên xảy ra nếu deduction trước đó thành công)
+     */
+    async restoreStockByOrder(productId: string, quantityToRestore: number) {
+        if (quantityToRestore <= 0) {
+            return { success: true, message: 'Không có số lượng cần phục hồi', restoredBatches: [] }
+        }
+
+        const batchList = await db.select().from(batches).where(eq(batches.productId, productId))
+        if (!batchList.length) {
+            // Không có batch nào – trường hợp này bất thường nhưng vẫn trả về để không chặn flow
+            return { success: false, message: 'Không tìm thấy lô hàng để phục hồi', restoredBatches: [] }
+        }
+
+        let remaining = quantityToRestore
+        const restoredBatches: Array<{ id: number; restored: number }> = []
+
+        for (const batch of batchList) {
+            if (remaining <= 0) break
+
+            // Sức chứa còn lại của lô (không vượt quá nhập ban đầu)
+            const capacity = Math.max(0, (batch as any).quantityImported - batch.quantityRemaining)
+            // Nếu schema không có quantityImported (đề phòng), cho phép cộng full
+            const canRestore = isFinite(capacity) && capacity > 0 ? Math.min(capacity, remaining) : remaining
+
+            if (canRestore <= 0) continue
+
+            const newQuantity = batch.quantityRemaining + canRestore
+            const [updated] = await db
+                .update(batches)
+                .set({ quantityRemaining: newQuantity, updatedAt: new Date() })
+                .where(eq(batches.id, batch.id))
+                .returning()
+
+            restoredBatches.push({ id: batch.id, restored: canRestore })
+            remaining -= canRestore
+        }
+
+        // Đồng bộ lại tổng tồn kho
+        await this.syncProductQuantity(productId)
+
+        return {
+            success: true,
+            message:
+                remaining > 0
+                    ? `Phục hồi một phần. Còn lại không thể phục hồi: ${remaining}`
+                    : 'Đã phục hồi tồn kho thành công',
+            restoredBatches,
+            remaining
+        }
+    }
 
     /**
      * Hoàn kho khi đơn hàng bị hủy

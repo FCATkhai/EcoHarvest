@@ -97,7 +97,7 @@ export function useOrder(id?: string) {
     return {
         orderDetails: (query.data ?? null) as {
             order: Order
-            items: OrderItem[]
+            items: (OrderItem & { imageUrl?: string | null })[]
             payment?: PaymentDetail
             orderOwner?: any
         } | null,

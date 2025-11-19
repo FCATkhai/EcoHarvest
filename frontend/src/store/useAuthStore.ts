@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { authClient } from '../lib/auth-client'
 import type { User } from '@/types/user.type'
 import { persist } from 'zustand/middleware'
-
+import useCartStore from './useCartStore'
 interface AuthState {
     user: User | null
     loading: boolean
@@ -11,6 +11,7 @@ interface AuthState {
     signUp: (data: { name: string; email: string; password: string }) => Promise<void>
     signOut: () => Promise<void>
     fetchSession: () => Promise<void>
+    clearSession: () => void
 }
 
 /**
@@ -63,6 +64,8 @@ const useAuthStore = create<AuthState>()(
                     const { error } = await authClient.signOut()
                     if (error) throw error
                     set({ user: null })
+                    //TODO: consider useCartStore in other component, not here
+                    useCartStore.getState().clearCartSession()
                 } catch (err) {
                     // console.error('SignOut failed:', err)
                     throw err
@@ -86,6 +89,11 @@ const useAuthStore = create<AuthState>()(
                 } finally {
                     set({ loading: false, initialized: true })
                 }
+            },
+
+            /** Xóa session (khi unmount app) */
+            clearSession: () => {
+                set({ user: null, initialized: false })
             }
         }),
         { name: 'auth-storage' }

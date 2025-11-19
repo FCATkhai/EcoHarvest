@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { db } from '@backend/db/client'
-import { orders, orderItems, paymentDetails, products } from '@backend/db/schema/'
+import { orders, orderItems, paymentDetails, products, productImages } from '@backend/db/schema/'
 import { eq, and } from 'drizzle-orm'
 import BatchService from '@backend/services/batch.service'
 import UserService from '@backend/services/user.service'
@@ -12,6 +12,7 @@ import CartService from '@backend/services/cart.service'
  */
 export async function createOrder(req: Request, res: Response, next: NextFunction) {
     const trx = db.transaction(async (tx) => {
+        let isDeductStock = false
         try {
             const userId = req.user.id
             const { items, total, paymentMethod, deliveryAddress } = req.body
@@ -47,6 +48,7 @@ export async function createOrder(req: Request, res: Response, next: NextFunctio
                     await BatchService.deductStockByOrder(item.productId, item.quantity)
                 })
             )
+            isDeductStock = true
 
             // 3) Thêm thông tin thanh toán
             const paymentRows = await tx
@@ -63,13 +65,26 @@ export async function createOrder(req: Request, res: Response, next: NextFunctio
             if (!newPayment) throw new Error('Không thể tạo thông tin thanh toán')
 
             // 4) Xoá các sản phẩm đã đặt khỏi giỏ hàng
-            await CartService.deleteCartItemsByIds(
-                userId,
-                items.map((item: any) => item.cartItemId)
-            )
+            //filter những item có cartItemId hợp lệ, bỏ qua những item không có cartItemId
+            const cartItemIds = items
+                .map((item: any) => item.cartItemId)
+                .filter((id: unknown) => typeof id === 'number' && !Number.isNaN(id))
+
+            if (cartItemIds.length) {
+                await CartService.deleteCartItemsByIds(userId, cartItemIds as number[])
+            }
 
             return { order: newOrder, payment: newPayment }
         } catch (error) {
+            if (isDeductStock) {
+                // Rollback tồn kho nếu có lỗi xảy ra sau khi đã trừ
+                const items = req.body.items
+                await Promise.all(
+                    items.map(async (item: any) => {
+                        await BatchService.restoreStockByOrder(item.productId, item.quantity)
+                    })
+                )
+            }
             throw error
         }
     })
@@ -111,6 +126,7 @@ export async function getAllOrders(req: Request, res: Response, next: NextFuncti
  * @desc Lấy chi tiết đơn hàng (bao gồm items và payment)
  * @access Private (admin hoặc chính chủ)
  */
+//TODO: lấy ảnh của item trong order
 export async function getOrderById(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params
@@ -125,8 +141,22 @@ export async function getOrderById(req: Request, res: Response, next: NextFuncti
             return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng' })
         }
 
-        // Lấy chi tiết items + payment
-        const items = await db.select().from(orderItems).where(eq(orderItems.orderId, id))
+        // Lấy chi tiết items + payment (kèm ảnh chính của sản phẩm nếu có)
+        const items = await db
+            .select({
+                id: orderItems.id,
+                orderId: orderItems.orderId,
+                productId: orderItems.productId,
+                quantity: orderItems.quantity,
+                price: orderItems.price,
+                imageUrl: productImages.imageUrl
+            })
+            .from(orderItems)
+            .leftJoin(
+                productImages,
+                and(eq(productImages.productId, orderItems.productId), eq(productImages.isPrimary, true))
+            )
+            .where(eq(orderItems.orderId, id))
         const [payment] = await db.select().from(paymentDetails).where(eq(paymentDetails.orderId, id))
         const orderOwner = await UserService.getUserById(userId)
 

@@ -5,12 +5,14 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import AppPath from '@/constants/AppPath'
+import { useEffect } from 'react'
 
 export default function CartIcon() {
+    // const CartInitialized = useCartStore((state) => state.initialized)
     const items = useCartStore((state) => state.items)
     const itemCount = useCartStore((state) => selectItemCount(state))
     const subtotal = useCartStore((state) => selectSubtotal(state))
-    // const fetchCart = useCartStore((state) => state.fetchCart)
+    const fetchCart = useCartStore((state) => state.fetchCart)
 
     const displayItems = items.slice(0, 5)
     const hasMore = items.length > 5
@@ -22,10 +24,12 @@ export default function CartIcon() {
         }).format(amount)
     }
 
-    // useEffect(() => {
-    //     // chỉ fetch 1 lần khi app mount
-    //     useCartStore.getState().fetchCart()
-    // }, [])
+    //TODO: wait đến khi có user thì mới fetch cart,
+    // xử lý lỗi cart chưa được consistent khi chuyển route, layout
+    // component load gây lag
+    useEffect(() => {
+        fetchCart()
+    }, [])
 
     return (
         <HoverCard openDelay={200} closeDelay={100}>

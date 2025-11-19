@@ -5,7 +5,7 @@ import type { Order, OrderItem, PaymentDetail } from '@/types/schema.type'
 const API_URL = '/orders'
 
 export interface CreateOrderDto {
-    items: Array<{ productId: string; quantity: number; price: number }>
+    items: Array<{ productId: string; quantity: number; price: number; cartItemId?: number }>
     total: number
     paymentMethod?: string
     deliveryAddress: string
@@ -26,8 +26,14 @@ export const orderApi = {
 
     // GET /api/orders/:id -> controller returns { order, items, payment, orderOwner }
     async getById(id: string) {
+        // items may include joined primary image (imageUrl) from backend
         const res = await axios.get<
-            ApiResponse<{ order: Order; items: OrderItem[]; payment?: PaymentDetail; orderOwner?: any }>
+            ApiResponse<{
+                order: Order
+                items: (OrderItem & { imageUrl?: string | null })[]
+                payment?: PaymentDetail
+                orderOwner?: any
+            }>
         >(`${API_URL}/${id}`)
         return res.data.data
     },

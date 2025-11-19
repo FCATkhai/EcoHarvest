@@ -14,9 +14,12 @@ import SignUp from '@/pages/Register/SignUp'
 import NotFound from '@/pages/NotFound'
 import Forbidden from '@/pages/Forbidden'
 
+import Home from '@/pages/Home'
 import Products from '@/pages/Products/Products'
 import ProductDetail from '@/pages/ProductDetail'
 import CardDetail from '@/pages/CartDetail'
+import Checkout from '@/pages/Checkout'
+import OrderPage from '@/pages/OrderPage'
 
 import { USER_ROLES } from '@/constants/userRoles'
 import About from '@/pages/About'
@@ -49,8 +52,8 @@ export const router = createBrowserRouter([
         element: <MainLayout />,
         children: [
             {
-                path: '/about',
-                element: <About />
+                path: AppPath.home,
+                element: <Home />
             },
             {
                 path: AppPath.products,
@@ -119,6 +122,14 @@ export const router = createBrowserRouter([
                             {
                                 path: AppPath.cart,
                                 element: <CardDetail />
+                            },
+                            {
+                                path: AppPath.checkout,
+                                element: <Checkout />
+                            },
+                            {
+                                path: AppPath.orders,
+                                element: <OrderPage />
                             }
                         ]
                     }
