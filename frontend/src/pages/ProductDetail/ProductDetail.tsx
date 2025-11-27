@@ -309,11 +309,6 @@ export default function ProductDetail() {
 
                 {/* Product Info */}
                 <div className='space-y-6 col-span-4'>
-                    <div>
-                        <h1 className='text-3xl font-bold mb-2'>{product.name}</h1>
-                        {product.description && <p className='text-muted-foreground'>{product.description}</p>}
-                    </div>
-
                     {/* Price */}
                     <div className='flex items-baseline gap-2'>
                         <span className='text-4xl font-bold text-primary'>{formatCurrency(product.price || 0)}</span>

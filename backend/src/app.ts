@@ -8,7 +8,9 @@ import { auth } from './utils/auth'
 const app = express()
 app.use(
     cors({
-        origin: 'http://localhost:3000', // Chỉ cho phép frontend origin
+        //TODO: set lại origin
+        // origin: 'http://localhost:3000', // Chỉ cho phép frontend origin
+        origin: true, // Cho phép tất cả các origin
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         credentials: true, // Cho phép cookies/sessions cross-origin
         allowedHeaders: ['Content-Type', 'Authorization']
@@ -27,7 +29,5 @@ app.use('/api', router)
 
 // Use Middleware
 app.use(errorHandler)
-
-
 
 export default app

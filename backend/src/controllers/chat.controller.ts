@@ -2,7 +2,10 @@ import { Request, Response, NextFunction } from 'express'
 import { db } from '@backend/db/client'
 import { chatSessions, chatMessages } from '../db/schema'
 import { eq, desc } from 'drizzle-orm'
+import { chatService } from '@backend/services/chat.service'
+import axios from '@backend/utils/axios'
 
+const AI_URL = process.env.AI_URL || 'http://localhost:8000'
 /**
  * @route POST api/chat/sessions
  * @desc Tạo phiên chat mới cho user
@@ -95,6 +98,7 @@ export async function getChatSessionById(req: Request, res: Response, next: Next
  * @desc Gửi tin nhắn trong phiên chat (tự tạo session nếu chưa có)
  * @access Private
  */
+//TODO: thiết kết hợp lý hơn, logic gọi AI agent ra service riêng
 export async function createChatMessage(req: Request, res: Response, next: NextFunction) {
     try {
         let { sessionId, content, sender, metadata } = req.body
@@ -126,29 +130,36 @@ export async function createChatMessage(req: Request, res: Response, next: NextF
             })
             .returning()
 
-        // 🤖 Gọi AI Agent để sinh phản hồi
-        // const botResponse = await aiAgent.generateReply({
-        //     sessionId,
-        //     userId,
-        //     userMessage: content
-        // })
+        const historyMessages = await chatService.getMessagesBySessionId(sessionId)
+        const history = historyMessages.map((msg) => ({
+            role: msg.sender === 'user' ? 'user' : 'assistant',
+            content: msg.content
+        }))
 
-        // // 💾 Lưu tin nhắn phản hồi của bot
-        // const [botMessage] = await db
-        //     .insert(chatMessages)
-        //     .values({
-        //         sessionId,
-        //         sender: 'bot',
-        //         content: botResponse.content,
-        //         metadata: botResponse.metadata || null
-        //     })
-        //     .returning()
+        const aiAgentResponse = await axios.post(`${AI_URL}/invoke`, {
+            session_id: sessionId,
+            user_id: userId,
+            message: content,
+            // chỉ lấy 10 tin nhắn gần nhất và loại bỏ tin nhắn cuối cùng vì nó là tin nhắn hiện tại
+            history: history.slice(Math.max(history.length - 11, 0), -1)
+        })
+
+        const assistantMessage = aiAgentResponse.data.reply
+        const [botMessage] = await db
+            .insert(chatMessages)
+            .values({
+                sessionId,
+                sender: 'assistant',
+                content: assistantMessage,
+                metadata: aiAgentResponse.data.metadata || null
+            })
+            .returning()
 
         res.status(201).json({
             success: true,
             message: 'Tin nhắn đã được gửi thành công',
             data: {
-                userMessage,
+                botMessage,
                 sessionId
             }
         })
@@ -170,11 +181,7 @@ export async function getMessagesBySession(req: Request, res: Response, next: Ne
             throw new Error('Thiếu sessionId')
         }
 
-        const messages = await db
-            .select()
-            .from(chatMessages)
-            .where(eq(chatMessages.sessionId, sessionId))
-            .orderBy(desc(chatMessages.createdAt))
+        const messages = await chatService.getMessagesBySessionId(sessionId)
 
         res.status(200).json({
             success: true,
