@@ -6,6 +6,18 @@ import { chatService } from '@backend/services/chat.service'
 import axios from '@backend/utils/axios'
 
 const AI_URL = process.env.AI_URL || 'http://localhost:8000'
+
+interface ChatRequest {
+    session_id?: string
+    user_id?: string
+    messages: { role: string; content: string }[]
+}
+
+interface ChatResponse {
+    assistant_message: string
+    tool_calls: any[]
+}
+
 /**
  * @route POST api/chat/sessions
  * @desc Tạo phiên chat mới cho user
@@ -131,7 +143,9 @@ export async function createChatMessage(req: Request, res: Response, next: NextF
             .returning()
 
         const historyMessages = await chatService.getMessagesBySessionId(sessionId)
-        const history = historyMessages.map((msg) => ({
+        // chỉ lấy 10 tin nhắn gần nhất và loại bỏ tin nhắn cuối cùng vì nó là tin nhắn hiện tại
+        const Trimmedhistory = historyMessages.slice(Math.max(historyMessages.length - 10, 0))
+        const history = Trimmedhistory.map((msg) => ({
             role: msg.sender === 'user' ? 'user' : 'assistant',
             content: msg.content
         }))
@@ -139,12 +153,12 @@ export async function createChatMessage(req: Request, res: Response, next: NextF
         const aiAgentResponse = await axios.post(`${AI_URL}/invoke`, {
             session_id: sessionId,
             user_id: userId,
-            message: content,
-            // chỉ lấy 10 tin nhắn gần nhất và loại bỏ tin nhắn cuối cùng vì nó là tin nhắn hiện tại
-            history: history.slice(Math.max(history.length - 11, 0), -1)
+            messages: history
         })
 
-        const assistantMessage = aiAgentResponse.data.reply
+        const assistantMessage = aiAgentResponse.data.assistant_message
+        const tool_calls = aiAgentResponse.data.tool_calls
+        console.log('Tool calls from AI agent:', tool_calls)
         const [botMessage] = await db
             .insert(chatMessages)
             .values({

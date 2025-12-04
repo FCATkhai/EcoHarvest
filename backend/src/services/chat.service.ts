@@ -1,6 +1,6 @@
 import { db } from '@backend/db/client'
 import { chatMessages, chatSessions } from '../db/schema/chat.schema'
-import { eq, desc } from 'drizzle-orm'
+import { eq, asc } from 'drizzle-orm'
 
 class ChatService {
     // lấy tất cả message của một phiên chat
@@ -9,7 +9,7 @@ class ChatService {
             .select()
             .from(chatMessages)
             .where(eq(chatMessages.sessionId, sessionId))
-            .orderBy(desc(chatMessages.createdAt))
+            .orderBy(asc(chatMessages.createdAt))
         return messages
     }
 }

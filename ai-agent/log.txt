@@ -1,0 +1,124 @@
+{'messages': [HumanMessage(content='xin chào', additional_kwargs={}, response_metadata={}, id='5c18c558-7aa9-4124-b1c7-d94f8dd93509'), AIMessage(content='Chào bạn, tôi có thể giúp gì cho bạn hôm nay?', additional_kwargs={}, response_metadata={}, id='894645aa-1820-494b-ab13-11a11a49cd8b'), HumanMessage(content='bên mình có gạo không', additional_kwargs={}, response_metadata={}, id='f972f9dd-267f-4e7a-b3ac-a5f277d4e4bf'), AIMessage(content='', additional_kwargs={'function_call': {'name': 'search_products', 'arguments': '{"query": "g\\u1ea1o"}'}}, response_metadata={'prompt_feedback': {'block_reason': 0, 'safety_ratings': []}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash-lite', 'safety_ratings': [], 'model_provider': 'google_genai'}, id='lc_run--458643f6-623b-4e30-aec8-089baa57729a-0', tool_calls=[{'name': 'search_products', 'args': {'query': 'gạo'}, 'id': '95abfc46-df39-479d-b0b6-fcebae642e16', 'type': 'tool_call'}], usage_metadata={'input_tokens': 267, 'output_tokens': 16, 'total_tokens': 283, 'input_token_details': {'cache_read': 0}}), ToolMessage(content='[{"id": "51c1adbb-ee03-4aaa-a2c1-bf4b0fb091ad", "name": "Gạo Jasmine", "description": "Gạo jasmine có hạt dài, thon, sáng bóng và rất mẩy, có độ dẻo gấp khoảng ba lần so với gạo hạt dài của Mỹ. Được trồng chủ yếu ở miền Nam Việt Nam, Thái Lan, Campuchia và Lào, cho năng suất rất cao, thời vụ ngắn ngày nên có diễn tích trông lớn nhất trong tất cả các giống lúa. Đây đồng thời cũng là sản phẩm rất được ưa chuộng tại nhiều nơi trên thế giới đặc biệt là khu vực Châu Á.", "categoryId": 2, "price": 35000, "unit": "kg", "quantity": 0, "sold": 0, "origin": "Việt Nam", "status": 1, 
+"isDeleted": 0, "createdAt": "2025-11-19T09:12:00.008Z", "updatedAt": "2025-11-19T09:11:59.672Z", "deletedAt": null, "image": {"id": 12, "productId": "51c1adbb-ee03-4aaa-a2c1-bf4b0fb091ad", "imageUrl": "https://vxthphghtseotlurcruy.supabase.co/storage/v1/object/public/product-images/51c1adbb-ee03-4aaa-a2c1-bf4b0fb091ad-1763543533616.jpg", "isPrimary": true, "altText": "gao-jamin.jpg", "createdAt": "2025-11-19T09:12:14.801Z"}}, {"id": "a1268e63-36d5-4667-8a12-f6f116337fa8", "name": "Gạo Hương Lài Sữa Dẻo", "description": "Gạo hương lài sữa dẻo là dòng gạo cao cấp, nổi bật với hương thơm nhẹ nhàng như hoa lài và vị ngọt sữa đặc trưng. Khi nấu chín, hạt cơm mềm dẻo nhưng không nhão, vị đậm đà và thơm lừng lan tỏa khắp gian bếp. Đây là loại gạo được yêu thích tại nhiều gia đình, đặc biệt thích hợp cho trẻ nhỏ và người cao tuổi.", "categoryId": 2, "price": 35000, "unit": "kg", "quantity": 0, "sold": 0, "origin": "Việt Nam", "status": 1, "isDeleted": 0, "createdAt": "2025-11-19T09:10:49.146Z", "updatedAt": "2025-11-19T09:10:48.811Z", "deletedAt": null, "image": {"id": 11, "productId": "a1268e63-36d5-4667-8a12-f6f116337fa8", "imageUrl": "https://vxthphghtseotlurcruy.supabase.co/storage/v1/object/public/product-images/a1268e63-36d5-4667-8a12-f6f116337fa8-1763543470228.jpg", "isPrimary": true, "altText": "gao-huong-lai.jpg", "createdAt": "2025-11-19T09:11:11.271Z"}}, {"id": "4851022a-ef11-4265-aa7e-4679fb3767c1", "name": "Gạo Bắc Hương", "description": "Gạo Bắc Hương là một trong những giống gạo nổi tiếng tại Việt Nam, 
+đặc biệt là khu vực Nam Định, đồng bằng Bắc Bộ. Được biết đến rộng rãi nhờ vào hương vị thơm ngon và chất lượng cao, có hạt gạo 
+dài, trắng ngần và khi nấu chín, cơm mềm dẻo, thơm lừng. Không chỉ giàu dinh dưỡng mà còn mang lại cảm giác ngon miệng cho từng 
+bữa ăn của gia đình.", "categoryId": 2, "price": 20000, "unit": "kg", "quantity": 0, "sold": 0, "origin": "Nam Định", "status": 
+1, "isDeleted": 0, "createdAt": "2025-11-19T09:09:39.479Z", "updatedAt": "2025-11-19T09:09:39.145Z", "deletedAt": null, "image": {"id": 10, "productId": "4851022a-ef11-4265-aa7e-4679fb3767c1", "imageUrl": "https://vxthphghtseotlurcruy.supabase.co/storage/v1/object/public/product-images/4851022a-ef11-4265-aa7e-4679fb3767c1-1763543388012.jpg", "isPrimary": true, "altText": "gao-bac-huong-sieu-thi-dung-ha.jpg", "createdAt": "2025-11-19T09:09:49.457Z"}}, {"id": "8f030e9e-af5c-4dc7-b87b-eae4f8212e6a", "name": "Bánh đa cua Hải Phòng", "description": "Bánh đa cua, còn gọi là canh bánh đa, là một trong những món nước đặc trưng của ẩm thực miền Bắc, nhất là ở Hải Phòng. Theo truyền thống địa phương, bánh đa cua thường sử dụng các thành phần chính như sau:\\n\\n– Cua 
+đồng: thường chọn cua cái vì có lượng thịt và gạch nhiều hơn cua đực.\\n\\n– Bánh đa đỏ: đây là loại bánh truyền thống của người Hải Phòng với màu đỏ của bánh đa làm cho món bánh đa cua trở nên đặc biệt hơn.\\n\\nSợi bánh đa đỏ có bản rộng hơn so với sợi bánh đa trắng, mỏng và dai. Bánh đa đỏ được làm từ gạo xay, rồi đem pha bột theo công thức và tráng bánh. Khi nấu có thể dùng bánh đa tươi hoặc khô.", "categoryId": 2, "price": 20000, "unit": "400gr", "quantity": 0, "sold": 0, "origin": "Hải Phòng", "status": 1, "isDeleted": 0, "createdAt": "2025-11-19T09:07:35.944Z", "updatedAt": "2025-11-19T09:07:35.612Z", "deletedAt": null, "image": {"id": 7, "productId": "8f030e9e-af5c-4dc7-b87b-eae4f8212e6a", "imageUrl": "https://vxthphghtseotlurcruy.supabase.co/storage/v1/object/public/product-images/8f030e9e-af5c-4dc7-b87b-eae4f8212e6a-1763543281065.jpg", "isPrimary": true, "altText": "Nguon-goc-banh-da-do-Hai-Phong.jpg", "createdAt": "2025-11-19T09:08:02.582Z"}}]', name='search_products', id='8450498b-b4f7-4dd1-b04a-480d1a88b2af', tool_call_id='95abfc46-df39-479d-b0b6-fcebae642e16'), AIMessage(content='Chúng tôi có các loại gạo sau:\n- Gạo Jasoc-banh-da-do-Hai-Phong.jpg", "createdAt": "2025-11-19T09:08:02.582Z"}}]', name='search_products', id='8450498b-b4f7-4dd1-b04a-4oc-banh-da-do-Hai-Phong.jpg", "createdAt": "2025-11-19T09:08:02.582Z"}}]', name='search_products', id='8450498b-b4f7-4dd1-b04a-480d1a88b2af', tool_call_id='95abfc46-df39-479d-b0b6-fcebae642e16'), AIMessage(content='Chúng tôi có các loại gạo sau:\n- Gạo Jasoc-banh-da-do-Hai-Phong.jpg", "createdAt": "2025-11-19T09:08:02.582Z"}}]', name='search_products', id='8450498b-b4f7-4dd1-b04a-4oc-banh-da-do-Hai-Phong.jpg", "createdAt": "2025-11-19T09:08:02.582Z"}}]', name='search_products', id='8450498b-b4f7-4dd1-b04a-480d1a88b2af', tool_call_id='95abfc46-df39-479d-b0b6-fcebae642e16'), AIMessage(content='Chúng tôi có các loại gạo sau:\n- Gạo Jasoc-banh-da-do-Hai-Phong.jpg", "createdAt": "2025-11-19T09:08:02.582Z"}}]', name='search_products', id='8450498b-b4f7-4dd1-b04a-4oc-banh-da-do-Hai-Phong.jpg", "createdAt": "2025-11-19T09:08:02.582Z"}}]', name='search_products', id='8450498b-b4f7-4dd1-b04a-4oc-banh-da-do-Hai-Phong.jpg", "createdAt": "2025-11-19T09:08:02.582Z"}}]', name='search_products', id='8450498b-b4f7-4dd1-b04a-480d1a88b2af', tool_call_id='95abfc46-df39-479d-b0b6-fcebae642e16'), AIMessage(content='Chúng tôi có các loại gạo sau:\n- Gạo Jasmine: 35.000đ/kg\n- Gạo Hương Lài Sữa Dẻo: 35.000đ/kg\n- Gạo Bắc Hương: 20.000đ/kg\n\nBạn có muốn tìm hiểu thêm về loại gạo nào 
+không?', additional_kwargs={}, response_metadata={'prompt_feedback': {'block_reason': 0, 'safety_ratings': []}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash-lite', 'safety_ratings': [], 'model_provider': 'google_genai'}, id='lc_run--f4eda661-b5e3-4d7d-a450-7b207c845dcc-0', usage_metadata={'input_tokens': 2166, 'output_tokens': 77, 'total_tokens': 2243, 'input_token_details': {'cache_read': 0}})]}
+INFO:     Started server process [23380]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'agent.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete. 
+INFO:     Finished server process [23380]
+INFO:     Started server process [29008]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+[{'role': 'user', 'content': 'xin chào'}]
+📜 Loaded 1 messages from request
+Chào bạn, tôi có thể giúp gì cho bạn?
+INFO:     127.0.0.1:14340 - "POST /invoke HTTP/1.1" 200 OK
+[{'role': 'user', 'content': 'xin chào'}, {'role': 'assistant', 'content': 'Chào bạn, tôi có thể giúp gì cho bạn?'}, {'role': 'user', 'content': 'bên mình có gạo không'}]
+📜 Loaded 3 messages from request
+<table>
+  <tr>
+    <th>Tên sản phẩm</th>
+    <th>Mô tả</th>
+    <th>Nguồn gốc</th>
+    <th>Đơn giá</th>
+  </tr>
+  <tr>
+    <td>Gạo Jasmine</td>
+    <td>Gạo jasmine có hạt dài, thon, sáng bóng và rất mẩy, có độ dẻo gấp khoảng ba lần so với gạo hạt dài của Mỹ. Được trồng chủ yếu ở miền Nam Việt Nam, Thái Lan, Campuchia và Lào, cho năng suất rất cao, thời vụ ngắn ngày nên có diễn tích trông lớn nhất 
+trong tất cả các giống lúa. Đây đồng thời cũng là sản phẩm rất được ưa chuộng tại nhiều nơi trên thế giới đặc biệt là khu vực Châu Á.</td>
+    <td>Việt Nam</td>
+    <td>35.000 VNĐ/kg</td>
+  </tr>
+  <tr>
+    <td>Gạo Hương Lài Sữa Dẻo</td>
+    <td>Gạo hương lài sữa dẻo là dòng gạo cao cấp, nổi bật với hương thơm nhẹ nhàng như hoa lài và vị ngọt sữa đặc trưng. Khi nấu chín, hạt cơm mềm dẻo nhưng không nhão, vị đậm đà và thơm lừng lan tỏa khắp gian bếp. Đây là loại gạo được yêu thích tại nhiều gia đình, đặc biệt thích hợp cho trẻ nhỏ và người cao tuổi.</td>
+    <td>Việt Nam</td>
+    <td>35.000 VNĐ/kg</td>
+  </tr>
+  <tr>
+    <td>Gạo Bắc Hương</td>
+    <td>Gạo Bắc Hương là một trong những giống gạo nổi tiếng tại Việt Nam, đặc biệt là khu vực Nam Định, đồng bằng Bắc Bộ. Được 
+biết đến rộng rãi nhờ vào hương vị thơm ngon và chất lượng cao, có hạt gạo dài, trắng ngần và khi nấu chín, cơm mềm dẻo, thơm lừng. Không chỉ giàu dinh dưỡng mà còn mang lại cảm giác ngon miệng cho từng bữa ăn của gia đình.</td>
+    <td>Nam Định</td>
+    <td>20.000 VNĐ/kg</td>
+  </tr>
+</table>
+INFO:     127.0.0.1:14352 - "POST /invoke HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'main.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [29008]
+INFO:     Started server process [22104]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+📜 Loaded 1 messages from request
+Chào bạn, tôi có thể giúp gì cho bạn?
+INFO:     127.0.0.1:14499 - "POST /invoke HTTP/1.1" 200 OK
+📜 Loaded 3 messages from request
+Vâng, chúng tôi có bán bí nha bạn. Hiện tại cửa hàng có **Bí Giọt Nước** với các thông tin chi tiết như sau:
+
+*   **Nguồn gốc:** Đà Lạt
+*   **Mô tả:** Giống bí này có nguồn gốc xuất xứ từ Nhật Bản, sau này được đem trồng phổ biến ở nhiều nơi trên Thế Giới nhờ khí 
+hậu thời tiết thuận tiện. Đặc biệt, bí giọt nước được trồng nhiều ở Đà Lạt.
+*   **Giá:** 50.000 VNĐ/kg
+*   **Số lượng còn:** 13 kg
+
+Bạn có muốn biết thêm thông tin gì về sản phẩm này không?
+INFO:     127.0.0.1:14514 - "POST /invoke HTTP/1.1" 200 OK
+📜 Loaded 1 messages from request
+Dưới đây là một số sản phẩm gạo mà chúng tôi có:
+* Gạo Jasmine: 35.000 đ/kg, có nguồn gốc từ Việt Nam. Loại gạo này có hạt dài, thon, sáng bóng, rất mẩy và dẻo.
+* Gạo Hương Lài Sữa Dẻo: 35.000 đ/kg, có nguồn gốc từ Việt Nam. Gạo có hương thơm nhẹ nhàng như hoa lài, vị ngọt sữa, khi nấu chín cơm mềm dẻo, không nhão.
+* Gạo Bắc Hương: 20.000 đ/kg, có nguồn gốc từ Nam Định. Hạt gạo dài, trắng ngần, khi nấu chín cơm mềm dẻo, thơm lừng.
+
+Ngoài ra, chúng tôi còn có sản phẩm Bánh đa cua Hải Phòng với giá 20.000 đ/400gr.
+
+Bạn có muốn tìm hiểu chi tiết hơn về sản phẩm nào không?
+INFO:     127.0.0.1:7737 - "POST /invoke HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'main.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [22104]
+INFO:     Started server process [9428]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+📜 Loaded 1 messages from request
+raw result: {'messages': [HumanMessage(content='thông tin về sản phẩm gạo', additional_kwargs={}, response_metadata={}, id='0225277c-a5e5-41ca-9c40-913b1e66eec7'), AIMessage(content='', additional_kwargs={'function_call': {'name': 'search_products', 'arguments': '{"query": "g\\u1ea1o"}'}}, response_metadata={'prompt_feedback': {'block_reason': 0, 'safety_ratings': []}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash-lite', 'safety_ratings': [], 'model_provider': 'google_genai'}, id='lc_run--c7af6ffb-1d46-4202-9ecc-0a3c096a93bd-0', tool_calls=[{'name': 'search_products', 'args': {'query': 'gạo'}, 'id': '6e939a05-e0cf-4a8e-b970-05a1db95d7d7', 'type': 'tool_call'}], usage_metadata={'input_tokens': 251, 'output_tokens': 16, 'total_tokens': 267, 'input_token_details': {'cache_read': 0}}), ToolMessage(content='[{"id": "51c1adbb-ee03-4aaa-a2c1-bf4b0fb091ad", "name": "Gạo Jasmine", 
+"description": "Gạo jasmine có hạt dài, thon, sáng bóng và rất mẩy, có độ dẻo gấp khoảng ba lần so với gạo hạt dài của Mỹ. Được 
+trồng chủ yếu ở miền Nam Việt Nam, Thái Lan, Campuchia và Lào, cho năng suất rất cao, thời vụ ngắn ngày nên có diễn tích trông lớn nhất trong tất cả các giống lúa. Đây đồng thời cũng là sản phẩm rất được ưa chuộng tại nhiều nơi trên thế giới đặc biệt là khu vực Châu Á.", "categoryId": 2, "price": 35000, "unit": "kg", "quantity": 0, "sold": 0, "origin": "Việt Nam", "status": 1, "isDeleted": 0, "createdAt": "2025-11-19T09:12:00.008Z", "updatedAt": "2025-11-19T09:11:59.672Z", "deletedAt": null, "image": {"id": 12, "productId": "51c1adbb-ee03-4aaa-a2c1-bf4b0fb091ad", "imageUrl": "https://vxthphghtseotlurcruy.supabase.co/storage/v1/object/public/product-images/51c1adbb-ee03-4aaa-a2c1-bf4b0fb091ad-1763543533616.jpg", "isPrimary": true, "altText": "gao-jamin.jpg", 
+"createdAt": "2025-11-19T09:12:14.801Z"}}, {"id": "a1268e63-36d5-4667-8a12-f6f116337fa8", "name": "Gạo Hương Lài Sữa Dẻo", "description": "Gạo hương lài sữa dẻo là dòng gạo cao cấp, nổi bật với hương thơm nhẹ nhàng như hoa lài và vị ngọt sữa đặc trưng. Khi nấu chín, hạt cơm mềm dẻo nhưng không nhão, vị đậm đà và thơm lừng lan tỏa khắp gian bếp. Đây là loại gạo được yêu thích tại nhiều gia đình, đặc biệt thích hợp cho trẻ nhỏ và người cao tuổi.", "categoryId": 2, "price": 35000, "unit": "kg", "quantity": 0, 
+"sold": 0, "origin": "Việt Nam", "status": 1, "isDeleted": 0, "createdAt": "2025-11-19T09:10:49.146Z", "updatedAt": "2025-11-19T09:10:48.811Z", "deletedAt": null, "image": {"id": 11, "productId": "a1268e63-36d5-4667-8a12-f6f116337fa8", "imageUrl": "https://vxthphghtseotlurcruy.supabase.co/storage/v1/object/public/product-images/a1268e63-36d5-4667-8a12-f6f116337fa8-1763543470228.jpg", "isPrimary": true, "altText": "gao-huong-lai.jpg", "createdAt": "2025-11-19T09:11:11.271Z"}}, {"id": "4851022a-ef11-4265-aa7e-4679fb3767c1", "name": "Gạo Bắc Hương", "description": "Gạo Bắc Hương là một trong những giống gạo nổi tiếng tại Việt Nam, đặc 
+biệt là khu vực Nam Định, đồng bằng Bắc Bộ. Được biết đến rộng rãi nhờ vào hương vị thơm ngon và chất lượng cao, có hạt gạo dài, trắng ngần và khi nấu chín, cơm mềm dẻo, thơm lừng. Không chỉ giàu dinh dưỡng mà còn mang lại cảm giác ngon miệng cho từng bữa 
+ăn của gia đình.", "categoryId": 2, "price": 20000, "unit": "kg", "quantity": 0, "sold": 0, "origin": "Nam Định", "status": 1, "isDeleted": 0, "createdAt": "2025-11-19T09:09:39.479Z", "updatedAt": "2025-11-19T09:09:39.145Z", "deletedAt": null, "image": {"id": 10, "productId": "4851022a-ef11-4265-aa7e-4679fb3767c1", "imageUrl": "https://vxthphghtseotlurcruy.supabase.co/storage/v1/object/public/product-images/4851022a-ef11-4265-aa7e-4679fb3767c1-1763543388012.jpg", "isPrimary": true, "altText": "gao-bac-huong-sieu-thi-dung-ha.jpg", "createdAt": "2025-11-19T09:09:49.457Z"}}, {"id": "8f030e9e-af5c-4dc7-b87b-eae4f8212e6a", "name": "Bánh 
+đa cua Hải Phòng", "description": "Bánh đa cua, còn gọi là canh bánh đa, là một trong những món nước đặc trưng của ẩm thực miền 
+Bắc, nhất là ở Hải Phòng. Theo truyền thống địa phương, bánh đa cua thường sử dụng các thành phần chính như sau:\\n\\n– Cua đồng: thường chọn cua cái vì có lượng thịt và gạch nhiều hơn cua đực.\\n\\n– Bánh đa đỏ: đây là loại bánh truyền thống của người Hải Phòng với màu đỏ của bánh đa làm cho món bánh đa cua trở nên đặc biệt hơn.\\n\\nSợi bánh đa đỏ có bản rộng hơn so với sợi bánh 
+đa trắng, mỏng và dai. Bánh đa đỏ được làm từ gạo xay, rồi đem pha bột theo công thức và tráng bánh. Khi nấu có thể dùng bánh đa tươi hoặc khô.", "categoryId": 2, "price": 20000, "unit": "400gr", "quantity": 0, "sold": 0, "origin": "Hải Phòng", "status": 1, "isDeleted": 0, "createdAt": "2025-11-19T09:07:35.944Z", "updatedAt": "2025-11-19T09:07:35.612Z", "deletedAt": null, "image": 
+{"id": 7, "productId": "8f030e9e-af5c-4dc7-b87b-eae4f8212e6a", "imageUrl": "https://vxthphghtseotlurcruy.supabase.co/storage/v1/object/public/product-images/8f030e9e-af5c-4dc7-b87b-eae4f8212e6a-1763543281065.jpg", "isPrimary": true, "altText": "Nguon-goc-banh-da-do-Hai-Phong.jpg", "createdAt": "2025-11-19T09:08:02.582Z"}}]', name='search_products', id='d7f78f26-401d-49e7-bf8a-ea1677c8506f', tool_call_id='6e939a05-e0cf-4a8e-b970-05a1db95d7d7'), AIMessage(content='Dưới đây là một số sản phẩm gạo có trong cửa 
+hàng của chúng tôi:\n\n*   **Gạo Jasmine:** Loại gạo hạt dài, thon, mẩy, có độ dẻo cao. Được trồng chủ yếu ở miền Nam Việt Nam và các nước lân cận. Giá: 35.000 VNĐ/kg.\n*   **Gạo Hương Lài Sữa Dẻo:** Dòng gạo cao cấp với hương thơm nhẹ nhàng và vị ngọt sữa. Cơm mềm dẻo, không nhão. Giá: 35.000 VNĐ/kg.\n*   **Gạo Bắc Hương:** Giống gạo nổi tiếng từ Nam Định, có hạt dài, trắng ngần. 
+Cơm mềm dẻo, thơm lừng và giàu dinh dưỡng. Giá: 20.000 VNĐ/kg.\n\nNgoài ra, chúng tôi còn có **Bánh đa cua Hải Phòng** (20.000 VNĐ/400gr) cũng là một sản phẩm liên quan đến gạo.\n\nBạn có muốn tìm hiểu chi tiết hơn về sản phẩm nào không?', additional_kwargs={}, response_metadata={'prompt_feedback': {'block_reason': 0, 'safety_ratings': []}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash-lite', 'safety_ratings': [], 'model_provider': 'google_genai'}, id='lc_run--d6f2a1fb-3a4f-4c5c-8641-db1b1dd92ba7-0', usage_metadata={'input_tokens': 2150, 'output_tokens': 239, 'total_tokens': 2389, 'input_token_details': {'cache_read': 0}})]}
+Dưới đây là một số sản phẩm gạo có trong cửa hàng của chúng tôi:
+
+*   **Gạo Jasmine:** Loại gạo hạt dài, thon, mẩy, có độ dẻo cao. Được trồng chủ yếu ở miền Nam Việt Nam và các nước lân cận. Giá: 35.000 VNĐ/kg.
+*   **Gạo Hương Lài Sữa Dẻo:** Dòng gạo cao cấp với hương thơm nhẹ nhàng và vị ngọt sữa. Cơm mềm dẻo, không nhão. Giá: 35.000 VNĐ/kg.
+*   **Gạo Bắc Hương:** Giống gạo nổi tiếng từ Nam Định, có hạt dài, trắng ngần. Cơm mềm dẻo, thơm lừng và giàu dinh dưỡng. Giá: 
+20.000 VNĐ/kg.
+
+Ngoài ra, chúng tôi còn có **Bánh đa cua Hải Phòng** (20.000 VNĐ/400gr) cũng là một sản phẩm liên quan đến gạo.
+
+Bạn có muốn tìm hiểu chi tiết hơn về sản phẩm nào không?
+INFO:     127.0.0.1:7846 - "POST /invoke HTTP/1.1" 200 OK
+📜 Loaded 3 messages from request
+raw result: {'messages': [HumanMessage(content='thông tin về sản phẩm gạo', additional_kwargs={}, response_metadata={}, id='4c0fae1f-6262-404c-a041-fffd88709038'), AIMessage(content='Dưới đây là một số sản phẩm gạo có trong cửa hàng của chúng tôi:\n\n*   **Gạo Jasmine:** Loại gạo hạt dài, thon, mẩy, có độ dẻo cao. Được trồng chủ yếu ở miền Nam Việt Nam và các nước lân cận. Giá: 35.000 VNĐ/kg.\n*   **Gạo Hương Lài Sữa Dẻo:** Dòng gạo cao cấp với hương thơm nhẹ nhàng và vị ngọt sữa. Cơm mềm dẻo, không nhão. Giá: 35.000 VNĐ/kg.\n*   **Gạo Bắc Hương:** Giống gạo nổi tiếng từ Nam Định, có hạt dài, trắng ngần. Cơm mềm dẻo, thơm lừng và giàu dinh dưỡng. Giá: 20.000 VNĐ/kg.\n\nNgoài ra, chúng tôi còn có **Bánh đa cua Hải Phòng** (20.000 VNĐ/400gr) cũng là một sản phẩm liên quan đến gạo.\n\nBạn có muốn tìm hiểu chi tiết hơn về sản phẩm nào không?', additional_kwargs={}, response_metadata={}, 
+id='6a2fe6df-0b95-42ac-81bd-ee102808a781'), HumanMessage(content='gạo Bắc Hương giá bao nhiêu', additional_kwargs={}, response_metadata={}, id='5ad06381-4db6-4da3-b893-8967b2243d20'), AIMessage(content='Gạo Bắc Hương có giá 20.000 VNĐ/kg.', additional_kwargs={}, response_metadata={'prompt_feedback': {'block_reason': 0, 'safety_ratings': []}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash-lite', 'safety_ratings': [], 'model_provider': 'google_genai'}, id='lc_run--8c1bc4d4-94b1-4c22-9675-801a7b841023-0', usage_metadata={'input_tokens': 499, 'output_tokens': 18, 'total_tokens': 517, 'input_token_details': {'cache_read': 0}})]}
+Gạo Bắc Hương có giá 20.000 VNĐ/kg.
+INFO:     127.0.0.1:7921 - "POST /invoke HTTP/1.1" 200 OK

@@ -159,3 +159,19 @@ export type CartItem = {
 export type CartItemWithCheck = CartItem & {
     isChecked: boolean
 }
+
+// chat types
+export type ChatSession = {
+    id: string
+    userId: string
+    createdAt?: string | Date
+}
+
+export type ChatMessage = {
+    id: string
+    sessionId: string
+    sender: string
+    content: string
+    metadata?: any
+    createdAt?: string | Date
+}

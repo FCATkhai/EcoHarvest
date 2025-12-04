@@ -15,6 +15,13 @@
       "when": 1763215367154,
       "tag": "0001_wandering_lilith",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1764405269600,
+      "tag": "0002_slippery_wallflower",
+      "breakpoints": true
     }
   ]
 }

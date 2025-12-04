@@ -53,7 +53,7 @@ export const ownershipAuthorize = async (req: Request, res: Response, next: Next
         }
 
         // chỉ admin hoặc chính chủ được phép
-        const isAdmin = req.user.role === USER_ROLES.Admin
+        const isAdmin = req.user.role === USER_ROLES.ADMIN
         const isOwner = req.user.id === requestUserId
 
         if (!isAdmin && !isOwner) {

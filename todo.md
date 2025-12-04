@@ -24,3 +24,7 @@
 - [ ] fix navigate admin đăng nhập
 - [ ] add guard handle: not found
 - [ ] update cập nhật UI khi sửa đổi batch thì giá tiền của import receipt chưa được cập nhật trên frontend
+
+## chat
+
+- [ ] thêm tool response vào metadata để có lịch sử dùng tool
