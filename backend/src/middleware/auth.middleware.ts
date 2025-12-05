@@ -66,3 +66,19 @@ export const ownershipAuthorize = async (req: Request, res: Response, next: Next
         return res.status(500).json({ error: 'Internal Server Error' })
     }
 }
+
+const AI_AGENT_API_KEY = process.env.AI_AGENT_API_KEY || 'default_ai_agent_key'
+
+// Middleware xác thực cho AI Agent sử dụng API key
+export const aiAgentAuthorize = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const apiKey = req.headers['x-api-key']
+        if (!apiKey || apiKey !== AI_AGENT_API_KEY) {
+            return res.status(401).json({ error: 'Unauthorized: invalid API key' })
+        }
+        next()
+    } catch (error) {
+        console.error('AI Agent Authorize error:', error)
+        return res.status(500).json({ error: 'Internal Server Error' })
+    }
+}

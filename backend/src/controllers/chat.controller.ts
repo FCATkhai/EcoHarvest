@@ -144,7 +144,7 @@ export async function createChatMessage(req: Request, res: Response, next: NextF
 
         const historyMessages = await chatService.getMessagesBySessionId(sessionId)
         // chỉ lấy 10 tin nhắn gần nhất và loại bỏ tin nhắn cuối cùng vì nó là tin nhắn hiện tại
-        const Trimmedhistory = historyMessages.slice(Math.max(historyMessages.length - 10, 0))
+        const Trimmedhistory = historyMessages.slice(Math.max(historyMessages.length - 20, 0))
         const history = Trimmedhistory.map((msg) => ({
             role: msg.sender === 'user' ? 'user' : 'assistant',
             content: msg.content

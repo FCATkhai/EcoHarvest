@@ -7,7 +7,7 @@ from agent import model
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 
 from models import ChatRequest, ChatResponse
 from agent import agent
@@ -28,8 +28,17 @@ app.add_middleware(
 @app.post("/invoke", response_model=ChatResponse)
 async def invoke(payload: ChatRequest):
     try:
+        system_prompt = SystemMessage(f"""Bạn là một trợ lý ảo am hiểu về nông nghiệp và các sản phẩm nông sản. 
+            Hãy giúp người dùng tìm kiếm và cung cấp thông tin chi tiết về các sản phẩm nông sản từ hệ thống cửa hàng của chúng tôi. 
+            Sử dụng các công cụ tìm kiếm sản phẩm và lấy chi tiết sản phẩm khi cần thiết.
+            ID của người dùng: {payload.user_id}
+            Hãy đảm bảo rằng bạn cung cấp thông tin chính xác và hữu ích cho người dùng.
+            Nếu bạn không chắc chắn về câu trả lời, hãy thận trọng và đề nghị người dùng kiểm tra lại thông tin từ nguồn chính thức.
+            """)
+        
         # Convert history messages from backend to LangChain message objects
         langchain_messages = []
+        langchain_messages.append(system_prompt)
         
         if payload.messages:
             for msg in payload.messages:
@@ -50,12 +59,16 @@ async def invoke(payload: ChatRequest):
 
         # result["messages"] là list các HumanMessage/AIMessage/ToolMessage
         messages = result.get("messages", [])
+        print(f"\n\nLast message: {messages[-1]}\n")
 
         # lấy AIMessage cuối cùng (phần tử cuối)
         final_msg = ""
         for msg in reversed(messages):
             if msg.type == "ai" and msg.content:
-                final_msg = msg.content
+                if isinstance(msg.content, str):
+                    final_msg = msg.content
+                elif isinstance(msg.content, list) and len(msg.content) > 0:
+                    final_msg = msg.content[0].get('text')
                 break
 
         # lấy tool_calls nếu muốn

@@ -11,6 +11,7 @@ import categoryRoutes from './category.routes'
 import subCategoryRoutes from './subCategory.routes'
 import productImageRoutes from './productImage.routes'
 import productCertificationRoutes from './productCertification.routes'
+import aiAgentRoutes from './agent.routes'
 
 const router = Router()
 
@@ -26,5 +27,6 @@ router.use('/product-certifications', productCertificationRoutes)
 router.use('/chats', chatRoutes)
 router.use('/categories', categoryRoutes)
 router.use('/sub-categories', subCategoryRoutes)
+router.use('/agent', aiAgentRoutes)
 
 export default router

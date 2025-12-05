@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { db } from '@backend/db/client'
 import { cart, cartItems, products, productImages } from '@backend/db/schema'
 import { eq, and, or } from 'drizzle-orm'
+import cartService from '@backend/services/cart.service'
 
 /**
  * @route GET api/cart
@@ -17,29 +18,7 @@ export async function getUserCart(req: Request, res: Response, next: NextFunctio
             throw new Error('Bạn cần đăng nhập để xem giỏ hàng')
         }
 
-        // Tìm hoặc tạo giỏ hàng cho user
-        let [userCart] = await db.select().from(cart).where(eq(cart.userId, userId))
-
-        if (!userCart) {
-            ;[userCart] = await db.insert(cart).values({ userId }).returning()
-        }
-        if (!userCart) {
-            res.status(500)
-            throw new Error('Không thể tạo giỏ hàng cho người dùng')
-        }
-
-        // Lấy danh sách sản phẩm trong giỏ (chưa gắn ảnh)
-        const items = await db
-            .select({
-                id: cartItems.id,
-                productId: cartItems.productId,
-                quantity: cartItems.quantity,
-                name: products.name,
-                price: products.price
-            })
-            .from(cartItems)
-            .leftJoin(products, eq(cartItems.productId, products.id))
-            .where(eq(cartItems.cartId, userCart.id))
+        const { userCart, items } = await cartService.getCartByUserId(userId)
 
         // Gắn ảnh primary cho mỗi sản phẩm, tránh N+1 bằng một truy vấn tổng hợp
         const productIds = items.map((i) => i.productId).filter((id): id is string => !!id)
@@ -89,53 +68,16 @@ export async function addItemToCart(req: Request, res: Response, next: NextFunct
             throw new Error('Thiếu productId hoặc quantity không hợp lệ')
         }
 
-        // Tìm giỏ hàng hoặc tạo mới
-        let [userCart] = await db.select().from(cart).where(eq(cart.userId, userId))
-        if (!userCart) {
-            ;[userCart] = await db.insert(cart).values({ userId }).returning()
-        }
-        if (!userCart) {
+        const addedCartItem = await cartService.addItemToCart(userId, productId, quantity)
+        if (!addedCartItem) {
             res.status(500)
-            throw new Error('Không thể tạo giỏ hàng cho người dùng')
+            throw new Error('Không thể thêm sản phẩm vào giỏ hàng')
         }
-
-        // Kiểm tra sản phẩm đã có trong giỏ chưa
-        const [existingItem] = await db
-            .select()
-            .from(cartItems)
-            .where(and(eq(cartItems.cartId, userCart.id), eq(cartItems.productId, productId)))
-
-        if (existingItem) {
-            // Cộng thêm số lượng
-            const newQuantity = existingItem.quantity + quantity
-            const [updatedItem] = await db
-                .update(cartItems)
-                .set({ quantity: newQuantity, updatedAt: new Date() })
-                .where(eq(cartItems.id, existingItem.id))
-                .returning()
-
-            res.status(200).json({
-                success: true,
-                message: 'Cập nhật số lượng sản phẩm trong giỏ hàng',
-                data: updatedItem
-            })
-        } else {
-            // Thêm sản phẩm mới vào giỏ
-            const [newItem] = await db
-                .insert(cartItems)
-                .values({
-                    cartId: userCart.id,
-                    productId,
-                    quantity
-                })
-                .returning()
-
-            res.status(201).json({
-                success: true,
-                message: 'Đã thêm sản phẩm vào giỏ hàng',
-                data: newItem
-            })
-        }
+        res.status(200).json({
+            success: true,
+            message: 'Đã thêm sản phẩm vào giỏ hàng',
+            data: addedCartItem
+        })
     } catch (error) {
         next(error)
     }
@@ -229,6 +171,61 @@ export async function clearUserCart(req: Request, res: Response, next: NextFunct
         res.status(200).json({
             success: true,
             message: 'Đã xóa toàn bộ sản phẩm trong giỏ hàng'
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+//--------------------------------
+// ai agent routes handled in ai-agent service
+//--------------------------------
+/**
+ * @route GET api/agent/cart
+ * @desc Lấy giỏ hàng của user bằng ai agent (tự tạo nếu chưa có)
+ * @access AI Agent Private
+ */
+export async function aiGetUserCart(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { userId } = req.body
+        if (!userId) {
+            res.status(400)
+            throw new Error('Thiếu userId trong yêu cầu')
+        }
+        const { userCart, items } = await cartService.getCartByUserId(userId)
+        res.status(200).json({
+            success: true,
+            data: {
+                cart: userCart,
+                items: items
+            }
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+/**
+ * @route POST api/agent/cart/items
+ * @desc Thêm sản phẩm vào giỏ hàng (cộng dồn nếu đã tồn tại)
+ * @access AI Agent Private
+ */
+export async function aiAddItemToCart(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { userId, productId, quantity } = req.body
+        if (!userId || !productId || !quantity || quantity <= 0) {
+            res.status(400)
+            throw new Error('Thiếu userId, productId hoặc quantity không hợp lệ trong yêu cầu')
+        }
+        const addedCartItem = await cartService.addItemToCart(userId, productId, quantity)
+        if (!addedCartItem) {
+            res.status(500)
+            throw new Error('Không thể thêm sản phẩm vào giỏ hàng')
+        }
+        res.status(200).json({
+            success: true,
+            message: 'Đã thêm sản phẩm vào giỏ hàng',
+            data: addedCartItem
         })
     } catch (error) {
         next(error)

@@ -9,7 +9,7 @@ from tools import tools
 
 GOOGLE_API_KEY = os.environ["GOOGLE_API_KEY"]
 
-model = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite", api_key=GOOGLE_API_KEY)
+model = ChatGoogleGenerativeAI(model="gemini-2.5-flash", api_key=GOOGLE_API_KEY)
 
 @wrap_tool_call
 def handle_tool_errors(request, handler):
@@ -23,15 +23,8 @@ def handle_tool_errors(request, handler):
             tool_call_id=request.tool_call["id"]
         )
 
-system_prompt = """Bạn là một trợ lý ảo am hiểu về nông nghiệp và các sản phẩm nông sản. 
-Hãy giúp người dùng tìm kiếm và cung cấp thông tin chi tiết về các sản phẩm nông sản từ hệ thống cửa hàng của chúng tôi. 
-Sử dụng các công cụ tìm kiếm sản phẩm và lấy chi tiết sản phẩm khi cần thiết.
-Hãy đảm bảo rằng bạn cung cấp thông tin chính xác và hữu ích cho người dùng.
-Nếu bạn không chắc chắn về câu trả lời, hãy thận trọng và đề nghị người dùng kiểm tra lại thông tin từ nguồn chính thức.
-"""
-
 # response = model.invoke("Hello")
-agent = create_agent(model=model, tools=tools, middleware=[handle_tool_errors], system_prompt=system_prompt)
+agent = create_agent(model=model, tools=tools, middleware=[handle_tool_errors])
 
 # response = agent.invoke({
 #     "messages": [{"role": "user", "content": "Xin chào, bạn có thể giúp tôi tìm sản phẩm bí giọt nước không?"}]

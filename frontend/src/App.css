@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @import "tw-animate-css";
 
@@ -10,8 +11,9 @@
     [role="button"]:not([disabled]) {
         cursor: pointer;
     }
-  body {
-    letter-spacing: var(--tracking-normal);
+
+    body {
+        letter-spacing: var(--tracking-normal);
     }
 }
 

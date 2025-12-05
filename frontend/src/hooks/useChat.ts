@@ -20,6 +20,7 @@ export function useChatSessions() {
     const createSession = useMutation({
         mutationFn: async () => {
             const res = await chatApi.createSession()
+            // res is ApiResponse<ChatSession>, so res.data is ChatSession
             return res.data
         },
         onSuccess: () => {

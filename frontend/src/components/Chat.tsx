@@ -6,7 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useChatSessions, useChatMessages } from '@/hooks/useChat'
 import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
+import ReactMarkdown from 'react-markdown'
 
+//TODO: xem lại chỗ button lồng span (button xoá phiên chat)
 export default function Chat() {
     const [isOpen, setIsOpen] = useState(false)
     const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
@@ -46,7 +48,9 @@ export default function Chat() {
         try {
             await deletingSession(id)
             if (currentSessionId === id) {
-                setCurrentSessionId(sessions.length > 1 ? sessions[0].id : null)
+                // Find remaining sessions (filter out the deleted one)
+                const remainingSessions = sessions.filter((s) => s.id !== id)
+                setCurrentSessionId(remainingSessions.length > 0 ? remainingSessions[0].id : null)
             }
             toast.success('Đã xóa phiên chat')
         } catch (error) {
@@ -61,8 +65,10 @@ export default function Chat() {
         try {
             let sessionId = currentSessionId
 
-            // Create new session if none exists
-            if (!sessionId) {
+            // Validate that the current session still exists, or create new one
+            const sessionExists = sessionId && sessions.some((s) => s.id === sessionId)
+
+            if (!sessionExists) {
                 const newSession = await createSession()
                 sessionId = newSession.id
                 setCurrentSessionId(sessionId)
@@ -76,6 +82,7 @@ export default function Chat() {
 
             setInputMessage('')
         } catch (error) {
+            console.error('❌ Error sending message:', error)
             toast.error('Không thể gửi tin nhắn')
         }
     }
@@ -127,15 +134,23 @@ export default function Chat() {
                                     >
                                         Chat {sessions.indexOf(session) + 1}
                                         {currentSessionId === session.id && (
-                                            <button
+                                            <span
                                                 onClick={(e) => {
                                                     e.stopPropagation()
                                                     handleDeleteSession(session.id)
                                                 }}
-                                                className='ml-2'
+                                                className='ml-2 inline-flex cursor-pointer'
+                                                role='button'
+                                                tabIndex={0}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' || e.key === ' ') {
+                                                        e.stopPropagation()
+                                                        handleDeleteSession(session.id)
+                                                    }
+                                                }}
                                             >
                                                 <Trash2 className='h-3 w-3' />
-                                            </button>
+                                            </span>
                                         )}
                                     </Button>
                                 ))}
@@ -176,9 +191,14 @@ export default function Chat() {
                                                     message.id.startsWith('temp-') && 'opacity-60'
                                                 )}
                                             >
-                                                <p className='whitespace-pre-wrap break-all text-sm'>
-                                                    {message.content}
-                                                </p>
+                                                <div
+                                                    className={cn(
+                                                        'prose prose-sm max-w-none',
+                                                        message.sender === 'user' ? 'text-white' : 'prose-slate'
+                                                    )}
+                                                >
+                                                    <ReactMarkdown>{message.content}</ReactMarkdown>
+                                                </div>
                                                 <span className='mt-1 block text-xs opacity-70'>
                                                     {formatTime(message.createdAt || new Date())}
                                                 </span>
