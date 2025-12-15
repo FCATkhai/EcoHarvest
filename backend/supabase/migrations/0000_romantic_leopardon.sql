@@ -52,7 +52,7 @@ CREATE TABLE "verification" (
 --> statement-breakpoint
 CREATE TABLE "cart" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"user_id" text,
+	"user_id" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone NOT NULL
 );
@@ -60,25 +60,25 @@ CREATE TABLE "cart" (
 CREATE TABLE "cart_items" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"cart_id" serial NOT NULL,
-	"product_id" uuid,
-	"quantity" integer,
+	"product_id" uuid NOT NULL,
+	"quantity" integer NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "chat_messages" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"session_id" uuid,
-	"sender" varchar(10),
+	"session_id" uuid NOT NULL,
+	"sender" varchar(10) NOT NULL,
 	"metadata" jsonb,
-	"content" text,
-	"created_at" timestamp DEFAULT now()
+	"content" text NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "chat_sessions" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"user_id" text,
-	"created_at" timestamp DEFAULT now()
+	"user_id" text NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "document_embeddings" (
@@ -115,11 +115,11 @@ CREATE TABLE "products" (
 	"category_id" serial NOT NULL,
 	"price" integer DEFAULT 0,
 	"unit" varchar,
-	"quantity" integer DEFAULT 0,
-	"sold" integer DEFAULT 0,
+	"quantity" integer DEFAULT 0 NOT NULL,
+	"sold" integer DEFAULT 0 NOT NULL,
 	"origin" varchar,
-	"status" smallint,
-	"is_deleted" smallint DEFAULT 0,
+	"status" smallint DEFAULT 1 NOT NULL,
+	"is_deleted" smallint DEFAULT 0 NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone NOT NULL,
 	"deleted_at" timestamp with time zone
@@ -129,9 +129,9 @@ CREATE TABLE "product_images" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"product_id" uuid NOT NULL,
 	"image_url" varchar NOT NULL,
-	"is_primary" boolean DEFAULT false,
+	"is_primary" boolean DEFAULT false NOT NULL,
 	"alt_text" varchar,
-	"created_at" timestamp DEFAULT now()
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "product_certifications" (
@@ -149,19 +149,20 @@ CREATE TABLE "product_certifications" (
 --> statement-breakpoint
 CREATE TABLE "orders" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"user_id" text,
-	"total" integer,
+	"user_id" text NOT NULL,
+	"total" integer NOT NULL,
 	"status" "order_status" DEFAULT 'pending' NOT NULL,
+	"delivery_address" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "payment_details" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"order_id" uuid,
-	"amount" integer,
-	"status" "payment_status",
-	"method" "payment_method",
+	"order_id" uuid NOT NULL,
+	"amount" integer NOT NULL,
+	"status" "payment_status" NOT NULL,
+	"method" "payment_method" NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone NOT NULL
 );
@@ -179,7 +180,6 @@ CREATE TABLE "batches" (
 	"product_id" uuid NOT NULL,
 	"import_receipt_id" serial NOT NULL,
 	"batch_code" varchar,
-	"import_date" date NOT NULL,
 	"expiry_date" date,
 	"quantity_imported" integer NOT NULL,
 	"quantity_remaining" integer NOT NULL,
@@ -212,7 +212,7 @@ CREATE TABLE "batch_documents" (
 --> statement-breakpoint
 CREATE TABLE "categories" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"name" varchar,
+	"name" varchar NOT NULL,
 	"description" varchar,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone NOT NULL
@@ -221,7 +221,7 @@ CREATE TABLE "categories" (
 CREATE TABLE "sub_categories" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"parent_id" serial NOT NULL,
-	"name" varchar,
+	"name" varchar NOT NULL,
 	"description" varchar,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone NOT NULL
@@ -246,4 +246,4 @@ ALTER TABLE "batches" ADD CONSTRAINT "batches_product_id_products_id_fk" FOREIGN
 ALTER TABLE "batches" ADD CONSTRAINT "batches_import_receipt_id_import_receipts_id_fk" FOREIGN KEY ("import_receipt_id") REFERENCES "public"."import_receipts"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "import_receipts" ADD CONSTRAINT "import_receipts_created_by_users_id_fk" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "batch_documents" ADD CONSTRAINT "batch_documents_batch_id_batches_id_fk" FOREIGN KEY ("batch_id") REFERENCES "public"."batches"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "sub_categories" ADD CONSTRAINT "sub_categories_parent_id_categories_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."categories"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "sub_categories" ADD CONSTRAINT "sub_categories_parent_id_categories_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."categories"("id") ON DELETE cascade ON UPDATE no action;

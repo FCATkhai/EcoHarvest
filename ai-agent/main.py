@@ -1,11 +1,6 @@
-import asyncio
-import os
-from typing import List, Dict, Any
-
 # from agent import QueueCallbackHandler, agent_executor
 from agent import model
 from fastapi import FastAPI
-from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 
@@ -17,8 +12,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    # allow_origins=["http://localhost:3000"],  
-    allow_origins=["*"],  # Allows all origins, for development purposes
+    allow_origins=["http://localhost:5000"], # Allow backend origin
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
@@ -71,7 +65,7 @@ async def invoke(payload: ChatRequest):
                     final_msg = msg.content[0].get('text')
                 break
 
-        # lấy tool_calls nếu muốn
+        # lấy tool_calls nếu có
         tool_calls = []
         for msg in messages:
             if hasattr(msg, "tool_calls") and msg.tool_calls:

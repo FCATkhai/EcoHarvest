@@ -8,6 +8,7 @@ dotenv.load_dotenv()
 BACKEND_URL = "http://localhost:5000/api"
 AI_AGENT_API_KEY = os.environ["AI_AGENT_API_KEY"]
 
+
 @tool
 def search_products(query: str) -> List[Dict[str, Any]]:
     """

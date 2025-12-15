@@ -1,11 +1,23 @@
-admin account:
-email: admin@gmail.com
-password: admin
+# Usage:
 
-customer account:
-email: customer1@gmail.com
-password: customer
+## Initiate backend
 
-restaurant_owner/merchant account
-email: nhahang@gmail.com
-password: nhahang
+```
+cd backend
+npm install
+npm run dev
+```
+
+## Initiate frontend
+```
+cd frontend
+npm install
+npm run dev
+```
+
+## initiate AI agent
+```
+cd ai-agent
+install require package in requirement.txt
+uvicorn main:app --port 8000 --reload
+```

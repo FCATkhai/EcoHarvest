@@ -1,6 +1,6 @@
 {
-  "id": "54ae678c-81fc-4848-94c5-477edfdb6a03",
-  "prevId": "b6a9ddb1-aeb1-43c4-8710-0e3542d09f5a",
+  "id": "d172274f-9b1f-4e5e-b39a-66591407045c",
+  "prevId": "d4b36ce4-6bee-4ddd-974b-47ccabd62b30",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -465,13 +465,13 @@
           "name": "session_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "sender": {
           "name": "sender",
           "type": "varchar(10)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "metadata": {
           "name": "metadata",
@@ -483,13 +483,13 @@
           "name": "content",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         }
       },
@@ -530,13 +530,13 @@
           "name": "user_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         }
       },
@@ -1194,6 +1194,19 @@
             "id"
           ],
           "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "order_items_product_id_products_id_fk": {
+          "name": "order_items_product_id_products_id_fk",
+          "tableFrom": "order_items",
+          "tableTo": "products",
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
           "onUpdate": "no action"
         }
       },

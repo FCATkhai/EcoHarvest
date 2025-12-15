@@ -6,7 +6,8 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
     plugins: [react(), tailwindcss()],
     server: {
-        port: 3000
+        port: 3000,
+        allowedHosts: ['ecoharvest.fcatkhai.id.vn']
     },
     resolve: {
         alias: {

@@ -119,24 +119,24 @@ export const router = createBrowserRouter([
                                 element: <ManageOrder />
                             }
                         ]
+                    }
+                ]
+            },
+            {
+                path: '',
+                element: <MainLayout />,
+                children: [
+                    {
+                        path: AppPath.cart,
+                        element: <CardDetail />
                     },
                     {
-                        path: '',
-                        element: <MainLayout />,
-                        children: [
-                            {
-                                path: AppPath.cart,
-                                element: <CardDetail />
-                            },
-                            {
-                                path: AppPath.checkout,
-                                element: <Checkout />
-                            },
-                            {
-                                path: AppPath.orders,
-                                element: <OrderPage />
-                            }
-                        ]
+                        path: AppPath.checkout,
+                        element: <Checkout />
+                    },
+                    {
+                        path: AppPath.orders,
+                        element: <OrderPage />
                     }
                 ]
             }

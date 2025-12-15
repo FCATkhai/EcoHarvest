@@ -1,4 +1,4 @@
-import { LogOutIcon, ShieldIcon, UserIcon, ReceiptText } from 'lucide-react'
+import { LogOutIcon, ShieldIcon, UserIcon, ReceiptText, House } from 'lucide-react'
 
 import { toast } from 'react-hot-toast'
 import { Button } from './ui/button'
@@ -51,11 +51,18 @@ export function UserDropdown({ user }: UserDropdownProps) {
 
 function AdminItem() {
     return (
-        <DropdownMenuItem asChild>
-            <Link to={AppPath.admin}>
-                <ShieldIcon className='size-4' /> <span>Admin</span>
-            </Link>
-        </DropdownMenuItem>
+        <>
+            <DropdownMenuItem asChild>
+                <Link to={AppPath.home}>
+                    <House className='size-4' /> <span>Trang chủ</span>
+                </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+                <Link to={AppPath.admin}>
+                    <ShieldIcon className='size-4' /> <span>Admin</span>
+                </Link>
+            </DropdownMenuItem>
+        </>
     )
 }
 

@@ -1,5 +1,11 @@
 # Project Todo
 
+## hot-fix
+- [ ] tên sản phẩm trong lô không get được khi quá 10 sản phẩm
+- [ ] filter theo category và subcategory bị lỗi
+
+## Chức năng chính
+
 - [ ] regenerate schema
 - [ ] cài đặt chức năng embedding
 - [ ] cài đặt chức năng chatbot
@@ -24,6 +30,7 @@
 - [ ] fix navigate admin đăng nhập
 - [ ] add guard handle: not found
 - [ ] update cập nhật UI khi sửa đổi batch thì giá tiền của import receipt chưa được cập nhật trên frontend
+- [ ] thêm slug url cho trang chi tiết sản phẩm
 
 ## chat
 
